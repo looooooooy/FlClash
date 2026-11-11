@@ -40,7 +40,7 @@ final class CommonActionProvider extends $NotifierProvider<CommonAction, void> {
   }
 }
 
-String _$commonActionHash() => r'c0861209c71a2996971e25c98f59f20770a8b848';
+String _$commonActionHash() => r'8d7900bb54d4de8c9f38b1aefd90845688e2eef0';
 
 abstract class _$CommonAction extends $Notifier<void> {
   void build();
@@ -91,7 +91,7 @@ final class SetupActionProvider extends $NotifierProvider<SetupAction, void> {
   }
 }
 
-String _$setupActionHash() => r'ee90d607ba84130b6ec2e112f8bd18598e2410aa';
+String _$setupActionHash() => r'1c04f674db90fa63e7df9244414269d3c300638f';
 
 abstract class _$SetupAction extends $Notifier<void> {
   void build();
@@ -142,7 +142,7 @@ final class BackupActionProvider extends $NotifierProvider<BackupAction, void> {
   }
 }
 
-String _$backupActionHash() => r'99b508bc48b5717dd2bf7f5da189f81944f37643';
+String _$backupActionHash() => r'e736b4282478452f74b79a97a137fa3ab87ba816';
 
 abstract class _$BackupAction extends $Notifier<void> {
   void build();
@@ -193,7 +193,7 @@ final class CoreActionProvider extends $NotifierProvider<CoreAction, void> {
   }
 }
 
-String _$coreActionHash() => r'66ca02d5e03d6de90ff4cf7849fd42b48c0d1313';
+String _$coreActionHash() => r'942a3b5732a4bf200f8e7d685fb5d6e37c01af9f';
 
 abstract class _$CoreAction extends $Notifier<void> {
   void build();
@@ -244,7 +244,7 @@ final class SystemActionProvider extends $NotifierProvider<SystemAction, void> {
   }
 }
 
-String _$systemActionHash() => r'9e7580ff094045c6261a66512301f98a7a505c3d';
+String _$systemActionHash() => r'ead536b93186113030f192bd50038359debca6bb';
 
 abstract class _$SystemAction extends $Notifier<void> {
   void build();
@@ -398,7 +398,7 @@ final class ProxiesActionProvider
   }
 }
 
-String _$proxiesActionHash() => r'09ba0ec4e7776a78aebca8ed2c54579bfdc59f8c';
+String _$proxiesActionHash() => r'bed4a89f83a539989f53e7c2d83641164f1f120a';
 
 abstract class _$ProxiesAction extends $Notifier<void> {
   void build();
@@ -450,7 +450,7 @@ final class ProfilesActionProvider
   }
 }
 
-String _$profilesActionHash() => r'd8a34d545b8191c46b1cff11a00ee5f33a7c2f8c';
+String _$profilesActionHash() => r'b68674665770abec6568c1ef618e17d4c0fe5416';
 
 abstract class _$ProfilesAction extends $Notifier<void> {
   void build();
@@ -554,7 +554,7 @@ final class MitmModulesActionProvider
   }
 }
 
-String _$mitmModulesActionHash() => r'cd33ffb399209820ebc80ad9d649c30e1f2ddec0';
+String _$mitmModulesActionHash() => r'99278008215d7cbe518bc879470ce01920fea82f';
 
 abstract class _$MitmModulesAction extends $Notifier<void> {
   void build();
@@ -763,7 +763,7 @@ final class ResourcesActionProvider
   }
 }
 
-String _$resourcesActionHash() => r'2034421cda9f4889f496aea8cd40e17c724ec4f9';
+String _$resourcesActionHash() => r'1d35501f1e3d2306e58da6b1759cb5d86c5de529';
 
 abstract class _$ResourcesAction extends $Notifier<void> {
   void build();
@@ -834,3 +834,134 @@ abstract class _$UpdatingAction extends $Notifier<void> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(privateAccountStore)
+final privateAccountStoreProvider = PrivateAccountStoreProvider._();
+
+final class PrivateAccountStoreProvider
+    extends
+        $FunctionalProvider<
+          ProtectedAccountStore,
+          ProtectedAccountStore,
+          ProtectedAccountStore
+        >
+    with $Provider<ProtectedAccountStore> {
+  PrivateAccountStoreProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'privateAccountStoreProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$privateAccountStoreHash();
+
+  @$internal
+  @override
+  $ProviderElement<ProtectedAccountStore> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ProtectedAccountStore create(Ref ref) {
+    return privateAccountStore(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ProtectedAccountStore value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ProtectedAccountStore>(value),
+    );
+  }
+}
+
+String _$privateAccountStoreHash() =>
+    r'78d11aeecf32b83c1196520c31e6d0b7b7249b88';
+
+@ProviderFor(accountSessionService)
+final accountSessionServiceProvider = AccountSessionServiceProvider._();
+
+final class AccountSessionServiceProvider
+    extends $FunctionalProvider<AccountService, AccountService, AccountService>
+    with $Provider<AccountService> {
+  AccountSessionServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'accountSessionServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$accountSessionServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<AccountService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AccountService create(Ref ref) {
+    return accountSessionService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AccountService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AccountService>(value),
+    );
+  }
+}
+
+String _$accountSessionServiceHash() =>
+    r'4c2b66f9be48a3b2bf5b500f0453d39fac2c325e';
+
+@ProviderFor(managedAccount)
+final managedAccountProvider = ManagedAccountProvider._();
+
+final class ManagedAccountProvider
+    extends $FunctionalProvider<ManagedAccount, ManagedAccount, ManagedAccount>
+    with $Provider<ManagedAccount> {
+  ManagedAccountProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'managedAccountProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$managedAccountHash();
+
+  @$internal
+  @override
+  $ProviderElement<ManagedAccount> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ManagedAccount create(Ref ref) {
+    return managedAccount(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ManagedAccount value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ManagedAccount>(value),
+    );
+  }
+}
+
+String _$managedAccountHash() => r'f68d9b1d2056359b7ad989e9a23d0a52d2f2a002';

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fl_clash/accounts/runtime.dart';
 import 'package:fl_clash/common/boot_guard.dart';
 import 'package:fl_clash/common/boot_record.dart';
 import 'package:fl_clash/common/common.dart';
@@ -168,6 +169,13 @@ class Bootstrap {
     }
     await _showCrashRecoveryTip();
     await _container.read(coreActionProvider.notifier).startCore();
+    _container.read(managedAccountProvider);
+    unawaited(
+      accountService
+          .initialize()
+          .then((_) => _container.read(managedAccountProvider).refreshIfStale())
+          .catchError((Object _) {}),
+    );
     if (!_bootDecision.isDegraded) {
       await _container.read(setupActionProvider.notifier).initStatus();
     }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
@@ -58,8 +60,8 @@ class ProxyCard extends ConsumerWidget {
 
   Measure get measure => globalState.measure;
 
-  Widget _buildProxyNameText(BuildContext context) {
-    if (type == ProxyCardType.compact) {
+  Widget _buildProxyNameText(BuildContext context, {required bool isHeySocks}) {
+    if (type == ProxyCardType.compact && !isHeySocks) {
       return SizedBox(
         height: measure.textHeight(AppTextStyle.subheadline) * 1,
         child: EmojiText(
@@ -132,19 +134,40 @@ class ProxyCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final measure = globalState.measure;
     final isLoose = type == ProxyCardType.loose;
+    final isHeySocks = ref.watch(
+      currentProfileProvider.select(
+        (profile) => profile?.type == ProfileType.heysocks,
+      ),
+    );
     final delayText = _DelayText(
       proxy: proxy,
+      groupName: groupName,
       testUrl: testUrl,
       alignment: isLoose ? Alignment.centerLeft : Alignment.centerRight,
     );
-    final proxyNameText = _buildProxyNameText(context);
+    final proxyNameText = isHeySocks
+        ? EmojiText(
+            ref.watch(managedProxyLabelsProvider)[proxy.name] ?? proxy.name,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyle.subheadline.of(context),
+          )
+        : _buildProxyNameText(context, isHeySocks: false);
     final typeStyle = AppTextStyle.footnote
         .of(context)
         .copyWith(
           overflow: TextOverflow.ellipsis,
           color: context.colorScheme.onSurface.opacity80,
         );
-    final details = isLoose
+    final details = isHeySocks
+        ? SizedBox(
+            height: measure.textHeight(AppTextStyle.footnote),
+            child: Align(
+              alignment: isLoose ? Alignment.centerLeft : Alignment.centerRight,
+              child: delayText,
+            ),
+          )
+        : isLoose
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -195,7 +218,10 @@ class ProxyCard extends ConsumerWidget {
             ref,
             inUse: inUse,
             pinned: pinned,
-            addable: _isAddableToLocal(proxy, isCustomProfile: isCustomProfile),
+            addable:
+                ref.watch(currentProfileProvider)?.type !=
+                    ProfileType.heysocks &&
+                _isAddableToLocal(proxy, isCustomProfile: isCustomProfile),
           ),
           child: Card(
             radius: AppCorner.lg,
@@ -204,25 +230,41 @@ class ProxyCard extends ConsumerWidget {
             onPressed: () => _handleSelect(ref),
             isSelected: inUse,
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 4,
-                  children: [
-                    Expanded(child: proxyNameText),
-                    if (pinned)
-                      SelectionBadge(glyph: Glyphs.pin, tonal: !inUse)
-                    else if (inUse)
-                      const SelectionBadge(),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                details,
-              ],
-            ),
+            child: isHeySocks
+                ? Row(
+                    spacing: 12,
+                    children: [
+                      Expanded(child: proxyNameText),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: 44,
+                          maxWidth: 88,
+                          minHeight: 44,
+                        ),
+                        child: Center(child: delayText),
+                      ),
+                      if (inUse) const SelectionBadge(),
+                    ],
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 4,
+                        children: [
+                          Expanded(child: proxyNameText),
+                          if (pinned)
+                            SelectionBadge(glyph: Glyphs.pin, tonal: !inUse)
+                          else if (inUse)
+                            const SelectionBadge(),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      details,
+                    ],
+                  ),
           ),
         );
       },
@@ -258,11 +300,13 @@ class _ProxyDesc extends ConsumerWidget {
 class _DelayText extends ConsumerStatefulWidget {
   const _DelayText({
     required this.proxy,
+    required this.groupName,
     required this.testUrl,
     required this.alignment,
   });
 
   final Proxy proxy;
+  final String groupName;
   final String? testUrl;
   final Alignment alignment;
 
@@ -297,8 +341,8 @@ class _DelayTextState extends ConsumerState<_DelayText> {
     });
   }
 
-  void _handleTestCurrentDelay() {
-    ref
+  Future<void> _handleTestCurrentDelay() async {
+    await ref
         .read(proxiesActionProvider.notifier)
         .proxyDelayTest(widget.proxy, widget.testUrl);
   }
@@ -346,7 +390,7 @@ class _DelayTextState extends ConsumerState<_DelayText> {
       actions: {
         ActivateIntent: CallbackAction<ActivateIntent>(
           onInvoke: (_) {
-            _handleTestCurrentDelay();
+            unawaited(_handleTestCurrentDelay());
             return null;
           },
         ),
@@ -374,7 +418,7 @@ class _DelayTextState extends ConsumerState<_DelayText> {
                         message: context.appLocalizations.delayTest,
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: _handleTestCurrentDelay,
+                          onTap: () => unawaited(_handleTestCurrentDelay()),
                           child: GlyphIcon(
                             AppGlyphs.bolt,
                             size: measure.textHeight(AppTextStyle.caption2),

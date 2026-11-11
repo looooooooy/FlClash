@@ -171,6 +171,11 @@ class _ProxiesListViewState extends ConsumerState<ProxiesListView> {
         final proxiesLayout = ref.watch(
           proxiesStyleSettingProvider.select((state) => state.layout),
         );
+        final isHeySocks = ref.watch(
+          currentProfileProvider.select(
+            (profile) => profile?.type == ProfileType.heysocks,
+          ),
+        );
         final isSearching = ref.watch(
           queryProvider(
             QueryTag.proxies,
@@ -195,10 +200,12 @@ class _ProxiesListViewState extends ConsumerState<ProxiesListView> {
                     );
               final groupWidth =
                   (width - gap * (groupColumns - 1)) / groupColumns;
-              final columns = getProxiesColumns(
-                max(groupWidth - _headerInset * 2, 0),
-                proxiesLayout,
-              );
+              final columns = isHeySocks && viewMode == ViewMode.mobile
+                  ? 1
+                  : getProxiesColumns(
+                      max(groupWidth - _headerInset * 2, 0),
+                      proxiesLayout,
+                    );
               _columns = columns;
               _groupColumns = groupColumns;
               _gap = gap;
@@ -603,6 +610,10 @@ class ListHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final groupName = group.name;
+    final profile = ref.watch(currentProfileProvider);
+    final isHeySocksCountry =
+        profile?.type == ProfileType.heysocks &&
+        profile?.managed?.countryNames.values.contains(groupName) == true;
     final isDelayTesting = ref.watch(
       delayTestingGroupsProvider.select((state) => state.contains(groupName)),
     );
@@ -625,7 +636,12 @@ class ListHeader extends ConsumerWidget {
               child: Row(
                 children: [
                   _GroupIcon(src: group.icon, name: groupName),
-                  Flexible(child: _GroupSummary(groupName: groupName)),
+                  Flexible(
+                    child: _GroupSummary(
+                      groupName: groupName,
+                      showSelectedProxy: !isHeySocksCountry,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -633,6 +649,7 @@ class ListHeader extends ConsumerWidget {
               isExpand: isExpand,
               isDelayTesting: isDelayTesting,
               groupType: group.type.name,
+              showGroupType: !isHeySocksCountry,
               onScrollToSelected: () {
                 onScrollToSelected(groupName);
               },
@@ -755,25 +772,30 @@ class _GroupIcon extends ConsumerWidget {
   }
 }
 
-class _GroupSummary extends StatelessWidget {
-  const _GroupSummary({required this.groupName});
+class _GroupSummary extends ConsumerWidget {
+  const _GroupSummary({
+    required this.groupName,
+    required this.showSelectedProxy,
+  });
 
   final String groupName;
+  final bool showSelectedProxy;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         EmojiText(
-          groupName,
+          ref.watch(managedProxyLabelsProvider)[groupName] ?? groupName,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyle.callout.of(context, emphasized: true),
         ),
         const SizedBox(height: 2),
-        Flexible(flex: 1, child: _SelectedProxyName(groupName: groupName)),
+        if (showSelectedProxy)
+          Flexible(flex: 1, child: _SelectedProxyName(groupName: groupName)),
       ],
     );
   }
@@ -793,7 +815,7 @@ class _SelectedProxyName extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     return EmojiText(
-      proxyName,
+      ref.watch(managedProxyLabelsProvider)[proxyName] ?? proxyName,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: AppTextStyle.caption1.of(context, emphasized: true).toLight,
@@ -806,6 +828,7 @@ class _GroupActions extends StatelessWidget {
     required this.isExpand,
     required this.isDelayTesting,
     required this.groupType,
+    required this.showGroupType,
     required this.onScrollToSelected,
     required this.onDelayTest,
     required this.onToggle,
@@ -814,6 +837,7 @@ class _GroupActions extends StatelessWidget {
   final bool isExpand;
   final bool isDelayTesting;
   final String groupType;
+  final bool showGroupType;
   final VoidCallback onScrollToSelected;
   final VoidCallback onDelayTest;
   final VoidCallback onToggle;
@@ -843,7 +867,7 @@ class _GroupActions extends StatelessWidget {
                 ),
               ],
             )
-          else
+          else if (showGroupType)
             Text(
               groupType,
               style: AppTextStyle.caption1

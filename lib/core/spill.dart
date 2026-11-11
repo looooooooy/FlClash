@@ -40,6 +40,15 @@ Future<CoreMethodResponse> resolveSpilledResponse(
   if (file == null) {
     return response;
   }
+  if (method?.isPrivateAccount ?? false) {
+    return CoreMethodResponse(
+      id: response.id,
+      error: const CoreMethodError(
+        code: 'private_spill_refused',
+        message: 'Invalid account response',
+      ),
+    );
+  }
   if (!await _isSpilled(file)) {
     return CoreMethodResponse(
       id: response.id,

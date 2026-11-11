@@ -1,3 +1,4 @@
+import 'package:fl_clash/views/profiles/account.dart';
 import 'dart:math' as math;
 
 import 'package:fl_clash/common/common.dart';
@@ -47,6 +48,8 @@ void _openProfile(BuildContext context, Profile? profile) {
   switch (profile) {
     case null:
       showProfilesSheet(context);
+    case Profile(type: ProfileType.heysocks):
+      showHeySocksAccount(context);
     case Profile(type: ProfileType.custom, :final id):
       showCustomProfileSheet(context, id);
     case _:
@@ -62,6 +65,7 @@ String _sourceOf(BuildContext context, ProfileType type) => switch (type) {
   ProfileType.url => context.appLocalizations.remote,
   ProfileType.file => context.appLocalizations.local,
   ProfileType.custom => context.appLocalizations.custom,
+  ProfileType.heysocks => context.appLocalizations.heysocksAccount,
 };
 
 class ProfilesCard extends ConsumerWidget {

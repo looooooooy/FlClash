@@ -204,7 +204,7 @@ func serve(dialed ipcConn) {
 
 		call := &MethodCall{}
 		if err := json.Unmarshal(data, call); err != nil {
-			logError("server unmarshal error: %v (data: %q)", err, data)
+			logError("server rejected an invalid method envelope")
 			continue
 		}
 

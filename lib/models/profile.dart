@@ -67,6 +67,7 @@ abstract class Profile with _$Profile {
     required int id,
     @Default(ProfileType.file) ProfileType type,
     @Default('') String label,
+    ManagedProfileInfo? managed,
     String? currentGroupName,
     @Default('') String url,
     @Default('') String ageSecretKey,
@@ -109,6 +110,23 @@ abstract class Profile with _$Profile {
       autoUpdateDuration: defaultUpdateDuration,
     );
   }
+}
+
+@freezed
+abstract class ManagedProfileInfo with _$ManagedProfileInfo {
+  const factory ManagedProfileInfo({
+    @Default('heysocks') String accountRef,
+    DateTime? catalogAt,
+    DateTime? fullRefreshAt,
+    @Default({}) Map<String, String> lineNames,
+    @Default({}) Map<String, String> countryNames,
+    @Default({}) Map<String, DateTime> checkedAt,
+    @Default(false) bool selectionRequired,
+    @Default(true) bool requiresLogin,
+  }) = _ManagedProfileInfo;
+
+  factory ManagedProfileInfo.fromJson(Map<String, Object?> json) =>
+      _$ManagedProfileInfoFromJson(json);
 }
 
 /// A profile leaving out one of the global rules its extension would add.

@@ -198,6 +198,17 @@ class Profiles extends _$Profiles {
     );
   }
 
+  Future<void> putManaged(Profile profile) {
+    assert(profile.type == ProfileType.heysocks);
+    final next = state.any((item) => item.id == profile.id)
+        ? state.copyAndPut(profile, (item) => item.id == profile.id)
+        : [...state, profile];
+    return _optimisticAsync(
+      next,
+      () => _serial(() => _putLatest([profile.id])),
+    );
+  }
+
   Profile labeled(Profile profile) => state.optimizeLabel(profile);
 
   /// A new provider label follows into custom profiles whatever path set it.

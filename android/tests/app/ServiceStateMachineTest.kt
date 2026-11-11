@@ -170,6 +170,22 @@ private class FakeHost(override val scope: CoroutineScope) : ServiceStateHost {
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ServiceStateMachineTest {
+    @Test
+    fun `managed background start asks for app refresh before setup`() = runTest {
+        val host = FakeHost(this).apply {
+            storedSharedState = configuredState().copy(
+                requiresAccountRefresh = true,
+                accountRefreshTip = "Open account",
+            )
+        }
+        val machine = ServiceStateMachine(host)
+        machine.handleStartAction()
+        assertEquals(0, host.setupCalls)
+        assertEquals(0, host.startCalls)
+        assertTrue(host.toasts.contains("Open account"))
+        assertFalse(machine.isRunRequested)
+    }
+
 
     @Test
     fun `initParams spells the keys the Go wrapper expects`() {

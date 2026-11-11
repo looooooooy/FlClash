@@ -1,5 +1,9 @@
 part of '../state.dart';
 
+final managedProxyLabelsProvider = Provider<Map<String, String>>(
+  (ref) => heySocksProxyLabels(ref.watch(currentProfileProvider)),
+);
+
 @riverpod
 GroupsState currentGroupsState(Ref ref) {
   final mode = ref.watch(
@@ -124,10 +128,15 @@ ProxiesListState proxiesListState(Ref ref) {
   final cardType = ref.watch(
     proxiesStyleSettingProvider.select((state) => state.cardType),
   );
+  final isHeySocks = ref.watch(
+    currentProfileProvider.select(
+      (profile) => profile?.type == ProfileType.heysocks,
+    ),
+  );
   return ProxiesListState(
     groups: currentGroups.value,
     currentUnfoldSet: currentUnfoldSet,
-    proxyCardType: cardType,
+    proxyCardType: isHeySocks ? ProxyCardType.compact : cardType,
   );
 }
 
@@ -141,10 +150,15 @@ ProxiesTabState proxiesTabState(Ref ref) {
   final cardType = ref.watch(
     proxiesStyleSettingProvider.select((state) => state.cardType),
   );
+  final isHeySocks = ref.watch(
+    currentProfileProvider.select(
+      (profile) => profile?.type == ProfileType.heysocks,
+    ),
+  );
   return ProxiesTabState(
     groups: currentGroups.value,
     currentGroupName: currentGroupName,
-    proxyCardType: cardType,
+    proxyCardType: isHeySocks ? ProxyCardType.compact : cardType,
   );
 }
 

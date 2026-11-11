@@ -118,7 +118,7 @@ final class CoreRpcClient implements CoreRpcChannel {
       throw CoreMethodException(
         code: 'transport_error',
         message: 'Unable to send ${method.wireName} to Core',
-        details: error.toString(),
+        details: method.isPrivateAccount ? null : error.toString(),
       );
     } finally {
       stopwatch.stop();
@@ -183,7 +183,7 @@ final class CoreRpcClient implements CoreRpcChannel {
       }
     } catch (error) {
       commonPrint.log(
-        'Failed to parse transport data: $error',
+        'Failed to parse transport data',
         logLevel: LogLevel.error,
       );
     }
@@ -246,10 +246,7 @@ final class CoreRpcClient implements CoreRpcChannel {
   }
 
   void _handleFrameError(Object error, StackTrace stackTrace) {
-    commonPrint.log(
-      'Transport data stream error: $error',
-      logLevel: LogLevel.debug,
-    );
+    commonPrint.log('Transport data stream error', logLevel: LogLevel.debug);
   }
 
   void _handleTransportEvent(DesktopTransportEvent event) {
@@ -261,12 +258,12 @@ final class CoreRpcClient implements CoreRpcChannel {
             message: 'Core transport disconnected',
           ),
         );
-      case TransportFailed(:final error):
+      case TransportFailed():
         _failPending(
-          CoreMethodException(
+          const CoreMethodException(
             code: 'transport_error',
             message: 'Core transport failed',
-            details: error.toString(),
+            details: null,
           ),
         );
       case TransportReady() || TransportConnected():

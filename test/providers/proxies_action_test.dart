@@ -368,6 +368,42 @@ void main() {
     );
   });
 
+  testWidgets(
+    'HeySocks periodically probes the active line only while visible and running',
+    (tester) async {
+      final profile = _selectedProfile('HK-01').copyWith(
+        type: ProfileType.heysocks,
+        selectedMap: {'HeySocks': 'HK-01'},
+        managed: const ManagedProfileInfo(lineNames: {'id': 'HK-01'}),
+      );
+      final container = _delayContainer(() => buildContainer(profile: profile));
+      container.read(groupsProvider.notifier).value = [
+        _group('HeySocks', [_proxy]),
+      ];
+      container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
+      container.read(runTimeProvider.notifier).value = 1;
+      container.read(appVisibleProvider.notifier).value = true;
+      when(() => core.testDelay(_delayTest(_testUrl, 'HK-01'))).thenAnswer(
+        (_) async => const Delay(name: 'HK-01', url: _testUrl, value: 30),
+      );
+      actionOf(container);
+      await tester.pump(const Duration(seconds: 45));
+      await tester.pump(const Duration(milliseconds: 500));
+      verify(() => core.testDelay(_delayTest(_testUrl, 'HK-01'))).called(1);
+      container.read(appVisibleProvider.notifier).value = false;
+      await tester.pump(const Duration(seconds: 90));
+      verifyNever(() => core.testDelay(any()));
+      container.read(appVisibleProvider.notifier).value = true;
+      await tester.pump(const Duration(seconds: 45));
+      await tester.pump(const Duration(milliseconds: 500));
+      verify(() => core.testDelay(_delayTest(_testUrl, 'HK-01'))).called(1);
+      container.read(runTimeProvider.notifier).value = null;
+      await tester.pump(const Duration(seconds: 90));
+      verifyNever(() => core.testDelay(any()));
+      container.dispose();
+    },
+  );
+
   group('proxyDelayTest', () {
     test('marks the node pending while it runs, then records it', () async {
       late ProviderContainer container;

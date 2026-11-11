@@ -44,6 +44,9 @@ class SetupAction extends _$SetupAction {
   _SetupInputs? _appliedInputs;
   var _lastPushDuration = Duration.zero;
   var _pendingForceApply = false;
+  var _managedSetupEpoch = 0;
+  var _modeChangeRevision = 0;
+  int? _submittedManagedProfileId;
 
   bool get _isRunning => _startTime != null && _startTime!.isBeforeNow;
 
@@ -170,6 +173,7 @@ class SetupAction extends _$SetupAction {
     required bool initialize,
     bool resume = false,
   }) {
+    if (!running) _modeChangeRevision++;
     final request = _RunRequest(
       running: running,
       initialize: initialize,
@@ -185,6 +189,24 @@ class SetupAction extends _$SetupAction {
   }
 
   Future<bool> _start(_RunRequest request) async {
+    if (ref.read(currentProfileProvider)?.type == ProfileType.heysocks) {
+      try {
+        await ref.read(managedAccountProvider).ensureUsable();
+        if (!_isCurrent(request)) return false;
+        if (!request.initialize && !await applyProfile(force: true)) {
+          _rollbackRunning(request);
+          return false;
+        }
+      } catch (error) {
+        _rollbackRunning(request);
+        throw MessageException(
+          accountFailureLabel(
+            currentAppLocalizations,
+            accountFailureKind(error),
+          ),
+        );
+      }
+    }
     if (request.initialize) {
       var applied = false;
       try {
@@ -261,6 +283,22 @@ class SetupAction extends _$SetupAction {
 
   Future<void> _setListening(bool running) async {
     final vpnOptions = await ref.read(vpnOptionsProvider.future);
+    if (running &&
+        ref.read(currentProfileProvider)?.type == ProfileType.heysocks &&
+        (!ref
+                .read(accountSessionServiceProvider)
+                .status
+                .value
+                .state
+                .authenticated ||
+            ref.read(currentProfileProvider)?.managed?.requiresLogin != false ||
+            managedSelectionRequired(
+              ref.read(currentProfileProvider)!.selectedMap,
+              globalMode:
+                  ref.read(patchClashConfigProvider).mode == Mode.global,
+            ))) {
+      throw MessageException(currentAppLocalizations.heysocksLoginRequired);
+    }
     try {
       await setCoreRunning(running);
     } catch (error) {
@@ -280,7 +318,18 @@ class SetupAction extends _$SetupAction {
 
   /// An excluded SSID parks the listener without ending the run.
   void syncSuspend() {
-    debouncer.call(FunctionTag.suspend, () {
+    debouncer.call(FunctionTag.suspend, () async {
+      if (ref.read(isStartProvider) &&
+          !ref.read(suspendProvider) &&
+          ref.read(currentProfileProvider)?.type == ProfileType.heysocks) {
+        try {
+          await ref.read(managedAccountProvider).ensureUsable();
+          await applyProfile();
+        } catch (_) {
+          await setRunning(false);
+          return;
+        }
+      }
       return _listenerScheduler.run(() async {
         if (!ref.read(isStartProvider) || ref.read(safeModeProvider)) {
           return;
@@ -374,7 +423,35 @@ class SetupAction extends _$SetupAction {
     );
   }
 
-  void changeMode(Mode mode) {
+  Future<void> changeMode(Mode mode) async {
+    final revision = ++_modeChangeRevision;
+    final profileId = ref.read(currentProfileIdProvider);
+    bool current() =>
+        revision == _modeChangeRevision &&
+        profileId == ref.read(currentProfileIdProvider);
+    if (_isRunning &&
+        mode != Mode.direct &&
+        ref.read(currentProfileProvider)?.type == ProfileType.heysocks) {
+      try {
+        await ref
+            .read(managedAccountProvider)
+            .ensureUsable(globalMode: mode == Mode.global);
+        if (!current()) return;
+        if (!await applyProfile(force: true) || !current()) return;
+      } catch (error) {
+        if (current()) {
+          dialogs.showBanner(
+            accountFailureLabel(
+              currentAppLocalizations,
+              accountFailureKind(error),
+            ),
+            level: BannerLevel.error,
+          );
+        }
+        return;
+      }
+    }
+    if (!current()) return;
     ref
         .read(patchClashConfigProvider.notifier)
         .update((state) => state.copyWith(mode: mode));
@@ -444,6 +521,30 @@ class SetupAction extends _$SetupAction {
     return result != _SetupTaskResult.failed;
   }
 
+  /// Called only by account cleanup, outside any active setup task.
+  Future<void> clearManagedSetup(
+    Future<void> Function(bool ownedRuntime) clear,
+  ) {
+    _managedSetupEpoch++;
+    _modeChangeRevision++;
+    debouncer.cancel(FunctionTag.applyProfile);
+    return _setupScheduler.run(() async {
+      final ownedRuntime = _submittedManagedProfileId != null;
+      // A setup already handed to Core can finish after the initial stop.
+      if (ref.read(currentProfileProvider)?.type == ProfileType.heysocks ||
+          _submittedManagedProfileId != null) {
+        await setRunning(false);
+      }
+      _submittedManagedProfileId = null;
+      _appliedInputs = null;
+      await clear(ownedRuntime);
+    });
+  }
+
+  @protected
+  Future<void> writeRuntimeConfig(String path, String yaml) =>
+      File(path).writeAsStringAtomically(yaml);
+
   Future<_SetupTaskResult> _runSetup({
     bool silence = false,
     bool force = false,
@@ -484,6 +585,19 @@ class SetupAction extends _$SetupAction {
     required PatchClashConfig patchConfig,
   }) async {
     final profileId = setupState.profileId;
+    if (setupState.profileType == ProfileType.heysocks) {
+      await ref.read(accountSessionServiceProvider).initialize();
+      final profile = ref.read(profilesProvider).getProfile(profileId);
+      if (!ref
+              .read(accountSessionServiceProvider)
+              .status
+              .value
+              .state
+              .authenticated ||
+          profile?.managed?.requiresLogin != false) {
+        throw MessageException(currentAppLocalizations.heysocksLoginRequired);
+      }
+    }
     if (profileId == null) {
       return (yaml: '', md5: '', counts: configCountsOf(const {}), base: null);
     }
@@ -504,7 +618,10 @@ class SetupAction extends _$SetupAction {
         ? await setupState.script?.content
         : null;
     final hasScript = scriptContent?.isNotEmpty == true;
-    final profileBase = !isCustom && !hasScript
+    final profileBase =
+        !isCustom &&
+            !hasScript &&
+            setupState.profileType != ProfileType.heysocks
         ? await _core.getProfileBase(profileId)
         : null;
     Map<String, dynamic> rawConfig = isCustom
@@ -516,6 +633,9 @@ class SetupAction extends _$SetupAction {
             ),
           }
         : profileBase?.base.config ?? await _core.readConfig(profileId);
+    if (setupState.profileType == ProfileType.heysocks) {
+      rawConfig = withManagedRouting(rawConfig);
+    }
     final proxyGroups = isCustom ? setupState.proxyGroups : <ProxyGroup>[];
     final rules = isCustom ? setupState.rules : <Rule>[];
     if (hasScript) {
@@ -620,6 +740,10 @@ class SetupAction extends _$SetupAction {
   }
 
   Future<String> getProfileWithId(int profileId) async {
+    if (ref.read(profilesProvider).getProfile(profileId)?.type ==
+        ProfileType.heysocks) {
+      return currentAppLocalizations.heysocksPrivateProfile;
+    }
     try {
       final setupState = await ref.read(setupStateProvider(profileId).future);
       final patchClashConfig = ref.read(patchClashConfigProvider);
@@ -723,12 +847,82 @@ class SetupAction extends _$SetupAction {
     FutureOr Function()? onUpdated,
   }) async {
     var profile = ref.read(currentProfileProvider) ?? recoverMissingProfile();
+    final managedProfileId = profile?.type == ProfileType.heysocks
+        ? profile!.id
+        : null;
+    final managedEpoch = _managedSetupEpoch;
+    int? accountGeneration;
+    bool managedCurrent() {
+      if (managedProfileId == null) return true;
+      final account = ref
+          .read(accountSessionServiceProvider)
+          .status
+          .value
+          .state;
+      return managedEpoch == _managedSetupEpoch &&
+          ref.read(currentProfileIdProvider) == managedProfileId &&
+          ref.read(currentProfileProvider)?.type == ProfileType.heysocks &&
+          account.authenticated &&
+          (accountGeneration == null ||
+              account.generation == accountGeneration);
+    }
+
+    void checkManaged() {
+      if (!managedCurrent()) throw const AccountFailure('superseded');
+    }
+
+    Future<void> guardedPreload() async {
+      checkManaged();
+      await preloadInvoke?.call();
+      checkManaged();
+    }
+
+    if (profile?.type == ProfileType.heysocks) {
+      final account = ref.read(accountSessionServiceProvider);
+      await account.initialize();
+      accountGeneration = account.status.value.state.generation;
+      if (managedEpoch != _managedSetupEpoch ||
+          ref.read(currentProfileIdProvider) != managedProfileId) {
+        return _SetupTaskResult.failed;
+      }
+      if (!account.status.value.state.authenticated ||
+          profile?.managed?.requiresLogin != false) {
+        await setRunning(false);
+        if (!silence) {
+          dialogs.showBanner(
+            currentAppLocalizations.heysocksLoginRequired,
+            level: BannerLevel.error,
+          );
+        }
+        return _SetupTaskResult.failed;
+      }
+      if (_isRunning) {
+        try {
+          await ref.read(managedAccountProvider).ensureUsable();
+          if (!managedCurrent()) return _SetupTaskResult.failed;
+        } catch (error) {
+          await setRunning(false);
+          if (!silence) {
+            dialogs.showBanner(
+              accountFailureLabel(
+                currentAppLocalizations,
+                accountFailureKind(error),
+              ),
+              level: BannerLevel.error,
+            );
+          }
+          return _SetupTaskResult.failed;
+        }
+        profile = ref.read(currentProfileProvider);
+      }
+    }
     // A refresh failure is surfaced by safeRun; setup keeps the old profile.
     final nextProfile = await globalState.safeRun(
       () => profile?.checkAndUpdateAndCopy(
         validate: (path, key) => _core.validateProfile(path, key),
       ),
     );
+    if (!managedCurrent()) return _SetupTaskResult.failed;
     if (nextProfile != null) {
       profile = nextProfile;
       ref.read(profilesProvider.notifier).put(nextProfile);
@@ -736,6 +930,7 @@ class SetupAction extends _$SetupAction {
     commonPrint.log('setup ===> ${profile?.realLabel}');
     final patchConfig = ref.read(patchClashConfigProvider);
     final shouldContinueSetup = await requestAdmin(patchConfig.tun.enable);
+    if (!managedCurrent()) return _SetupTaskResult.failed;
     if (!shouldContinueSetup) {
       return _SetupTaskResult.handoffToCoreRestart;
     }
@@ -748,7 +943,12 @@ class SetupAction extends _$SetupAction {
       setupState = state;
       return getProfile(setupState: state, patchConfig: realPatchConfig);
     }, title: 'build profile');
+    if (!managedCurrent()) return _SetupTaskResult.failed;
     final profileFailed = realProfile == null;
+    if (profileFailed && profile?.type == ProfileType.heysocks) {
+      await setRunning(false);
+      return _SetupTaskResult.failed;
+    }
     final setupParams = _setupParams.copyWith(base: realProfile?.base);
     final inputs = switch (setupState) {
       final state? when !profileFailed => (
@@ -762,9 +962,11 @@ class SetupAction extends _$SetupAction {
     final yamlString = realProfile?.yaml ?? '';
     final yamlMd5 = realProfile?.md5 ?? '';
     if (!profileFailed && yamlMd5 == globalState.lastConfigMd5 && !force) {
+      _submittedManagedProfileId = managedProfileId;
       _appliedInputs = inputs;
       globalState.lastConfigCounts = realProfile.counts;
-      await preloadInvoke?.call();
+      await guardedPreload();
+      if (!managedCurrent()) return _SetupTaskResult.failed;
       return _SetupTaskResult.completed;
     }
     // Go answers a config it rejects by running its built-in default, which
@@ -783,9 +985,14 @@ class SetupAction extends _$SetupAction {
     await globalState.loadingRun(
       () async {
         try {
+          checkManaged();
           if (setupParams.base == null) {
             final configFilePath = await appPath.configFilePath;
-            await File(configFilePath).writeAsStringAtomically(yamlString);
+            checkManaged();
+            if (managedProfileId != null) {
+              _submittedManagedProfileId = managedProfileId;
+            }
+            await writeRuntimeConfig(configFilePath, yamlString);
           }
           final profileId = profile?.id;
           if (profileId != null) {
@@ -801,20 +1008,28 @@ class SetupAction extends _$SetupAction {
             }
           }
           try {
+            checkManaged();
+            if (managedProfileId != null) {
+              _submittedManagedProfileId = managedProfileId;
+            }
             await _core.setupConfig(
               params: setupParams,
-              preloadInvoke: preloadInvoke,
+              preloadInvoke: preloadInvoke == null ? null : guardedPreload,
             );
+            checkManaged();
+            if (managedProfileId == null) _submittedManagedProfileId = null;
           } on CoreMethodException catch (error) {
             if (error.code != 'config_rejected') {
               rethrow;
             }
+            if (profile?.type == ProfileType.heysocks) await setRunning(false);
             globalState.lastConfigCounts = configCountsOf(const {});
             await globalState.safeRun(() => onUpdated?.call());
             throw MessageException(error.message);
           }
         } catch (e, s) {
           setupFailed = true;
+          if (e is AccountFailure && e.kind == 'superseded') return;
           if (preloadInvoke != null) {
             handoffFailure = (e, s);
           }

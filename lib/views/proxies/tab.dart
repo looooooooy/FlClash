@@ -169,6 +169,12 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
     final proxiesLayout = ref.watch(
       proxiesStyleSettingProvider.select((state) => state.layout),
     );
+    final isHeySocks = ref.watch(
+      currentProfileProvider.select(
+        (profile) => profile?.type == ProfileType.heysocks,
+      ),
+    );
+    final viewMode = ref.watch(viewModeProvider);
     final isSearching = ref.watch(
       queryProvider(
         QueryTag.proxies,
@@ -193,15 +199,22 @@ class ProxiesTabViewState extends ConsumerState<ProxiesTabView>
                       top: context.contentTopPadding - context.appBarInset,
                       bottom: 16,
                     ),
-                    child: GroupTabs(controller: controller, groups: groups),
+                    child: GroupTabs(
+                      controller: controller,
+                      groups: groups,
+                      labels: ref.watch(managedProxyLabelsProvider),
+                    ),
                   ),
                   Expanded(
                     child: WidthBuilder(
                       builder: (_, width) {
-                        final columns = getProxiesColumns(
-                          max(width - 32, 0),
-                          proxiesLayout,
-                        );
+                        final columns =
+                            isHeySocks && viewMode == ViewMode.mobile
+                            ? 1
+                            : getProxiesColumns(
+                                max(width - 32, 0),
+                                proxiesLayout,
+                              );
                         _columns = columns;
                         return TabBarView(
                           controller: controller,

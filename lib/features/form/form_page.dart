@@ -14,6 +14,7 @@ class FormPage extends StatelessWidget {
   final List<IconButtonData> actions;
   final String? error;
   final bool saving;
+  final bool showSaveAction;
   final List<Widget> children;
 
   const FormPage({
@@ -24,6 +25,7 @@ class FormPage extends StatelessWidget {
     this.actions = const [],
     this.error,
     this.saving = false,
+    this.showSaveAction = true,
     required this.children,
   });
 
@@ -32,12 +34,14 @@ class FormPage extends StatelessWidget {
     return Scaffold(
       title: title,
       iconActions: actions,
-      confirmationAction: IconButtonData(
-        glyph: AppGlyphs.check,
-        tooltip: saveLabel ?? context.appLocalizations.save,
-        isLoading: saving,
-        onPressed: saving ? null : onSave,
-      ),
+      confirmationAction: showSaveAction
+          ? IconButtonData(
+              glyph: AppGlyphs.check,
+              tooltip: saveLabel ?? context.appLocalizations.save,
+              isLoading: saving,
+              onPressed: saving ? null : onSave,
+            )
+          : null,
       body: ListView(
         shrinkWrap: true,
         padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(

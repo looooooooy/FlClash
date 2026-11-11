@@ -24,6 +24,44 @@ abstract class CoreHandlerInterface {
     Duration? timeout,
   });
 
+  Future<Object?> invokeAccountMethod({
+    required CoreMethod method,
+    required Map<String, Object?> arguments,
+    Duration timeout = const Duration(seconds: 60),
+  }) async {
+    if (!method.isPrivateAccount) {
+      throw const CoreMethodException(
+        code: 'invalid_arguments',
+        message: 'Invalid account method',
+      );
+    }
+    try {
+      return await invokeMethod(
+        method: method,
+        arguments: arguments,
+        timeout: timeout,
+      );
+    } on CoreMethodException catch (error) {
+      throw CoreMethodException(
+        code:
+            const {
+              'size_limit',
+              'invalid_arguments',
+              'private_spill_refused',
+              'internal_error',
+            }.contains(error.code)
+            ? error.code
+            : 'account_transport',
+        message: 'Account request failed',
+      );
+    } catch (_) {
+      throw const CoreMethodException(
+        code: 'account_transport',
+        message: 'Account connection unavailable',
+      );
+    }
+  }
+
   Future<Object?> _call(
     CoreMethod method, {
     Object? arguments,
@@ -31,9 +69,7 @@ abstract class CoreHandlerInterface {
   }) async {
     return await handleWatch(
       onStart: () {
-        commonPrint.log(
-          'Invoke method ${method.wireName} ${DateTime.now()} $arguments',
-        );
+        commonPrint.log('Invoke method ${method.wireName} ${DateTime.now()}');
       },
       function: () =>
           invokeMethod(method: method, arguments: arguments, timeout: timeout),

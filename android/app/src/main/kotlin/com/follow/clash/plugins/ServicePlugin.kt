@@ -91,10 +91,11 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             result.error("INVALID_ARGUMENT", "Method call payload must be a string", null)
             return
         }
+        NetworkObserver.start()
         ServiceController.invokeMethod(data) { response ->
             result.success(response)
-        }.onFailure { error ->
-            result.error("CORE_ERROR", error.message, null)
+        }.onFailure {
+            result.error("CORE_ERROR", "Core request failed", null)
         }
     }
 

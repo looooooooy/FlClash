@@ -15,11 +15,30 @@ class ProfilesAction extends _$ProfilesAction {
         ..[groupName] = proxyName;
       ref
           .read(profilesProvider.notifier)
-          .put(currentProfile.copyWith(selectedMap: selectedMap));
+          .put(
+            currentProfile.copyWith(
+              selectedMap: selectedMap,
+              managed: currentProfile.type == ProfileType.heysocks
+                  ? currentProfile.managed?.copyWith(
+                      selectionRequired: managedSelectionRequired(
+                        selectedMap,
+                        globalMode:
+                            ref.read(patchClashConfigProvider).mode ==
+                            Mode.global,
+                      ),
+                    )
+                  : currentProfile.managed,
+            ),
+          );
     }
   }
 
   Future<void> deleteProfile(int id) async {
+    if (ref.read(profilesProvider).getProfile(id)?.type ==
+        ProfileType.heysocks) {
+      await accountService.logout();
+      return;
+    }
     await ref.read(profilesProvider.notifier).del(id);
     await clearEffect(id);
     final currentProfileId = ref.read(currentProfileIdProvider);
@@ -40,6 +59,10 @@ class ProfilesAction extends _$ProfilesAction {
   }
 
   Future<void> autoUpdateProfiles() async {
+    await ref
+        .read(managedAccountProvider)
+        .refreshIfStale()
+        .catchError((Object _) {});
     for (final id in [
       for (final profile in ref.read(profilesProvider)) profile.id,
     ]) {
@@ -139,6 +162,19 @@ class ProfilesAction extends _$ProfilesAction {
     Profile profile, {
     bool showLoading = false,
   }) async {
+    if (profile.type == ProfileType.heysocks) {
+      try {
+        await ref.read(managedAccountProvider).sync();
+      } catch (error) {
+        throw MessageException(
+          accountFailureLabel(
+            currentAppLocalizations,
+            accountFailureKind(error),
+          ),
+        );
+      }
+      return;
+    }
     final operation = showLoading
         ? ref.read(updatingKeysProvider.notifier).start(profile.updatingKey)
         : null;

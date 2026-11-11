@@ -164,8 +164,16 @@ class CoreLib extends CoreHandlerInterface {
   }
 
   Future<Object?> _send({required CoreMethod method, Object? arguments}) async {
+    if (_closed) {
+      throw const CoreMethodException(
+        code: 'core_unavailable',
+        message: 'Core is closed',
+      );
+    }
     try {
-      await _connectedCompleter.future.timeout(coreConnectionWaitDuration);
+      if (!method.isPrivateAccount) {
+        await _connectedCompleter.future.timeout(coreConnectionWaitDuration);
+      }
     } on TimeoutException {
       throw CoreMethodException(
         code: 'core_unavailable',

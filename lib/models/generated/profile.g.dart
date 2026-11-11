@@ -28,6 +28,9 @@ _Profile _$ProfileFromJson(Map<String, dynamic> json) => _Profile(
       $enumDecodeNullable(_$ProfileTypeEnumMap, json['type']) ??
       ProfileType.file,
   label: json['label'] as String? ?? '',
+  managed: json['managed'] == null
+      ? null
+      : ManagedProfileInfo.fromJson(json['managed'] as Map<String, dynamic>),
   currentGroupName: json['currentGroupName'] as String?,
   url: json['url'] as String? ?? '',
   ageSecretKey: json['ageSecretKey'] as String? ?? '',
@@ -68,6 +71,7 @@ Map<String, dynamic> _$ProfileToJson(_Profile instance) => <String, dynamic>{
   'id': instance.id,
   'type': _$ProfileTypeEnumMap[instance.type]!,
   'label': instance.label,
+  'managed': instance.managed,
   'currentGroupName': instance.currentGroupName,
   'url': instance.url,
   'ageSecretKey': instance.ageSecretKey,
@@ -88,9 +92,52 @@ const _$ProfileTypeEnumMap = {
   ProfileType.file: 'file',
   ProfileType.url: 'url',
   ProfileType.custom: 'custom',
+  ProfileType.heysocks: 'heysocks',
 };
 
 const _$ExtendTypeEnumMap = {
   ExtendType.standard: 'standard',
   ExtendType.script: 'script',
 };
+
+_ManagedProfileInfo _$ManagedProfileInfoFromJson(Map<String, dynamic> json) =>
+    _ManagedProfileInfo(
+      accountRef: json['accountRef'] as String? ?? 'heysocks',
+      catalogAt: json['catalogAt'] == null
+          ? null
+          : DateTime.parse(json['catalogAt'] as String),
+      fullRefreshAt: json['fullRefreshAt'] == null
+          ? null
+          : DateTime.parse(json['fullRefreshAt'] as String),
+      lineNames:
+          (json['lineNames'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const {},
+      countryNames:
+          (json['countryNames'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const {},
+      checkedAt:
+          (json['checkedAt'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, DateTime.parse(e as String)),
+          ) ??
+          const {},
+      selectionRequired: json['selectionRequired'] as bool? ?? false,
+      requiresLogin: json['requiresLogin'] as bool? ?? true,
+    );
+
+Map<String, dynamic> _$ManagedProfileInfoToJson(_ManagedProfileInfo instance) =>
+    <String, dynamic>{
+      'accountRef': instance.accountRef,
+      'catalogAt': instance.catalogAt?.toIso8601String(),
+      'fullRefreshAt': instance.fullRefreshAt?.toIso8601String(),
+      'lineNames': instance.lineNames,
+      'countryNames': instance.countryNames,
+      'checkedAt': instance.checkedAt.map(
+        (k, e) => MapEntry(k, e.toIso8601String()),
+      ),
+      'selectionRequired': instance.selectionRequired,
+      'requiresLogin': instance.requiresLogin,
+    };

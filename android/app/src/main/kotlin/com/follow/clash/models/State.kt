@@ -12,6 +12,8 @@ data class SharedState(
     val stopText: String = "Stop",
     val onlyStatisticsProxy: Boolean = false,
     val showStopAction: Boolean = true,
+    val requiresAccountRefresh: Boolean = false,
+    val accountRefreshTip: String = "Open the app to refresh your HeySocks account before connecting.",
     val vpnOptions: VpnOptions? = null,
     // The Core's own setup params, handed on as Flutter wrote them.
     val setupParams: JsonObject? = null,

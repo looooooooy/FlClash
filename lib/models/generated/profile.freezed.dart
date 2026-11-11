@@ -295,7 +295,7 @@ as int,
 /// @nodoc
 mixin _$Profile {
 
- int get id; ProfileType get type; String get label; String? get currentGroupName; String get url; String get ageSecretKey; DateTime? get lastUpdateDate; Duration get autoUpdateDuration; SubscriptionInfo? get subscriptionInfo; bool get autoUpdate; Map<String, String> get selectedMap; Set<String> get unfoldSet; ExtendType get extendType; int? get scriptId; String? get matchTarget; int? get order;@JsonKey(fromJson: ProfileOverrides.safeFromJson) ProfileOverrides get overrides;
+ int get id; ProfileType get type; String get label; ManagedProfileInfo? get managed; String? get currentGroupName; String get url; String get ageSecretKey; DateTime? get lastUpdateDate; Duration get autoUpdateDuration; SubscriptionInfo? get subscriptionInfo; bool get autoUpdate; Map<String, String> get selectedMap; Set<String> get unfoldSet; ExtendType get extendType; int? get scriptId; String? get matchTarget; int? get order;@JsonKey(fromJson: ProfileOverrides.safeFromJson) ProfileOverrides get overrides;
 /// Create a copy of Profile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -309,20 +309,20 @@ $ProfileCopyWith<Profile> get copyWith => _$ProfileCopyWithImpl<Profile>(this as
 @override
 bool operator ==(Object other) {
   final _this = this as Profile;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Profile&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.currentGroupName, _this.currentGroupName) || other.currentGroupName == _this.currentGroupName)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.ageSecretKey, _this.ageSecretKey) || other.ageSecretKey == _this.ageSecretKey)&&(identical(other.lastUpdateDate, _this.lastUpdateDate) || other.lastUpdateDate == _this.lastUpdateDate)&&(identical(other.autoUpdateDuration, _this.autoUpdateDuration) || other.autoUpdateDuration == _this.autoUpdateDuration)&&(identical(other.subscriptionInfo, _this.subscriptionInfo) || other.subscriptionInfo == _this.subscriptionInfo)&&(identical(other.autoUpdate, _this.autoUpdate) || other.autoUpdate == _this.autoUpdate)&&const DeepCollectionEquality().equals(other.selectedMap, _this.selectedMap)&&const DeepCollectionEquality().equals(other.unfoldSet, _this.unfoldSet)&&(identical(other.extendType, _this.extendType) || other.extendType == _this.extendType)&&(identical(other.scriptId, _this.scriptId) || other.scriptId == _this.scriptId)&&(identical(other.matchTarget, _this.matchTarget) || other.matchTarget == _this.matchTarget)&&(identical(other.order, _this.order) || other.order == _this.order)&&(identical(other.overrides, _this.overrides) || other.overrides == _this.overrides));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Profile&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.managed, _this.managed) || other.managed == _this.managed)&&(identical(other.currentGroupName, _this.currentGroupName) || other.currentGroupName == _this.currentGroupName)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.ageSecretKey, _this.ageSecretKey) || other.ageSecretKey == _this.ageSecretKey)&&(identical(other.lastUpdateDate, _this.lastUpdateDate) || other.lastUpdateDate == _this.lastUpdateDate)&&(identical(other.autoUpdateDuration, _this.autoUpdateDuration) || other.autoUpdateDuration == _this.autoUpdateDuration)&&(identical(other.subscriptionInfo, _this.subscriptionInfo) || other.subscriptionInfo == _this.subscriptionInfo)&&(identical(other.autoUpdate, _this.autoUpdate) || other.autoUpdate == _this.autoUpdate)&&const DeepCollectionEquality().equals(other.selectedMap, _this.selectedMap)&&const DeepCollectionEquality().equals(other.unfoldSet, _this.unfoldSet)&&(identical(other.extendType, _this.extendType) || other.extendType == _this.extendType)&&(identical(other.scriptId, _this.scriptId) || other.scriptId == _this.scriptId)&&(identical(other.matchTarget, _this.matchTarget) || other.matchTarget == _this.matchTarget)&&(identical(other.order, _this.order) || other.order == _this.order)&&(identical(other.overrides, _this.overrides) || other.overrides == _this.overrides));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Profile;
-  return Object.hash(runtimeType,_this.id,_this.type,_this.label,_this.currentGroupName,_this.url,_this.ageSecretKey,_this.lastUpdateDate,_this.autoUpdateDuration,_this.subscriptionInfo,_this.autoUpdate,const DeepCollectionEquality().hash(_this.selectedMap),const DeepCollectionEquality().hash(_this.unfoldSet),_this.extendType,_this.scriptId,_this.matchTarget,_this.order,_this.overrides);
+  return Object.hash(runtimeType,_this.id,_this.type,_this.label,_this.managed,_this.currentGroupName,_this.url,_this.ageSecretKey,_this.lastUpdateDate,_this.autoUpdateDuration,_this.subscriptionInfo,_this.autoUpdate,const DeepCollectionEquality().hash(_this.selectedMap),const DeepCollectionEquality().hash(_this.unfoldSet),_this.extendType,_this.scriptId,_this.matchTarget,_this.order,_this.overrides);
 }
 
 @override
 String toString() {
   final _this = this as Profile;
-  return 'Profile(id: ${_this.id}, type: ${_this.type}, label: ${_this.label}, currentGroupName: ${_this.currentGroupName}, url: ${_this.url}, ageSecretKey: ${_this.ageSecretKey}, lastUpdateDate: ${_this.lastUpdateDate}, autoUpdateDuration: ${_this.autoUpdateDuration}, subscriptionInfo: ${_this.subscriptionInfo}, autoUpdate: ${_this.autoUpdate}, selectedMap: ${_this.selectedMap}, unfoldSet: ${_this.unfoldSet}, extendType: ${_this.extendType}, scriptId: ${_this.scriptId}, matchTarget: ${_this.matchTarget}, order: ${_this.order}, overrides: ${_this.overrides})';
+  return 'Profile(id: ${_this.id}, type: ${_this.type}, label: ${_this.label}, managed: ${_this.managed}, currentGroupName: ${_this.currentGroupName}, url: ${_this.url}, ageSecretKey: ${_this.ageSecretKey}, lastUpdateDate: ${_this.lastUpdateDate}, autoUpdateDuration: ${_this.autoUpdateDuration}, subscriptionInfo: ${_this.subscriptionInfo}, autoUpdate: ${_this.autoUpdate}, selectedMap: ${_this.selectedMap}, unfoldSet: ${_this.unfoldSet}, extendType: ${_this.extendType}, scriptId: ${_this.scriptId}, matchTarget: ${_this.matchTarget}, order: ${_this.order}, overrides: ${_this.overrides})';
 }
 
 
@@ -333,11 +333,11 @@ abstract mixin class $ProfileCopyWith<$Res>  {
   factory $ProfileCopyWith(Profile value, $Res Function(Profile) _then) = _$ProfileCopyWithImpl;
 @useResult
 $Res call({
- int id, ProfileType type, String label, String? currentGroupName, String url, String ageSecretKey, DateTime? lastUpdateDate, Duration autoUpdateDuration, SubscriptionInfo? subscriptionInfo, bool autoUpdate, Map<String, String> selectedMap, Set<String> unfoldSet, ExtendType extendType, int? scriptId, String? matchTarget, int? order,@JsonKey(fromJson: ProfileOverrides.safeFromJson) ProfileOverrides overrides
+ int id, ProfileType type, String label, ManagedProfileInfo? managed, String? currentGroupName, String url, String ageSecretKey, DateTime? lastUpdateDate, Duration autoUpdateDuration, SubscriptionInfo? subscriptionInfo, bool autoUpdate, Map<String, String> selectedMap, Set<String> unfoldSet, ExtendType extendType, int? scriptId, String? matchTarget, int? order,@JsonKey(fromJson: ProfileOverrides.safeFromJson) ProfileOverrides overrides
 });
 
 
-$SubscriptionInfoCopyWith<$Res>? get subscriptionInfo;$ProfileOverridesCopyWith<$Res> get overrides;
+$ManagedProfileInfoCopyWith<$Res>? get managed;$SubscriptionInfoCopyWith<$Res>? get subscriptionInfo;$ProfileOverridesCopyWith<$Res> get overrides;
 
 }
 /// @nodoc
@@ -350,12 +350,13 @@ class _$ProfileCopyWithImpl<$Res>
 
 /// Create a copy of Profile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? type = null,Object? label = null,Object? currentGroupName = freezed,Object? url = null,Object? ageSecretKey = null,Object? lastUpdateDate = freezed,Object? autoUpdateDuration = null,Object? subscriptionInfo = freezed,Object? autoUpdate = null,Object? selectedMap = null,Object? unfoldSet = null,Object? extendType = null,Object? scriptId = freezed,Object? matchTarget = freezed,Object? order = freezed,Object? overrides = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? type = null,Object? label = null,Object? managed = freezed,Object? currentGroupName = freezed,Object? url = null,Object? ageSecretKey = null,Object? lastUpdateDate = freezed,Object? autoUpdateDuration = null,Object? subscriptionInfo = freezed,Object? autoUpdate = null,Object? selectedMap = null,Object? unfoldSet = null,Object? extendType = null,Object? scriptId = freezed,Object? matchTarget = freezed,Object? order = freezed,Object? overrides = null,}) {
   return _then(Profile(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as ProfileType,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
-as String,currentGroupName: freezed == currentGroupName ? _self.currentGroupName : currentGroupName // ignore: cast_nullable_to_non_nullable
+as String,managed: freezed == managed ? _self.managed : managed // ignore: cast_nullable_to_non_nullable
+as ManagedProfileInfo?,currentGroupName: freezed == currentGroupName ? _self.currentGroupName : currentGroupName // ignore: cast_nullable_to_non_nullable
 as String?,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,ageSecretKey: null == ageSecretKey ? _self.ageSecretKey : ageSecretKey // ignore: cast_nullable_to_non_nullable
 as String,lastUpdateDate: freezed == lastUpdateDate ? _self.lastUpdateDate : lastUpdateDate // ignore: cast_nullable_to_non_nullable
@@ -373,6 +374,18 @@ as ProfileOverrides,
   ));
 }
 /// Create a copy of Profile
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ManagedProfileInfoCopyWith<$Res>? get managed {
+    if (_self.managed == null) {
+    return null;
+  }
+
+  return $ManagedProfileInfoCopyWith<$Res>(_self.managed!, (value) {
+    return _then(_self.copyWith(managed: value));
+  });
+}/// Create a copy of Profile
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -475,10 +488,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  ProfileType type,  String label,  String? currentGroupName,  String url,  String ageSecretKey,  DateTime? lastUpdateDate,  Duration autoUpdateDuration,  SubscriptionInfo? subscriptionInfo,  bool autoUpdate,  Map<String, String> selectedMap,  Set<String> unfoldSet,  ExtendType extendType,  int? scriptId,  String? matchTarget,  int? order, @JsonKey(fromJson: ProfileOverrides.safeFromJson)  ProfileOverrides overrides)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  ProfileType type,  String label,  ManagedProfileInfo? managed,  String? currentGroupName,  String url,  String ageSecretKey,  DateTime? lastUpdateDate,  Duration autoUpdateDuration,  SubscriptionInfo? subscriptionInfo,  bool autoUpdate,  Map<String, String> selectedMap,  Set<String> unfoldSet,  ExtendType extendType,  int? scriptId,  String? matchTarget,  int? order, @JsonKey(fromJson: ProfileOverrides.safeFromJson)  ProfileOverrides overrides)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Profile() when $default != null:
-return $default(_that.id,_that.type,_that.label,_that.currentGroupName,_that.url,_that.ageSecretKey,_that.lastUpdateDate,_that.autoUpdateDuration,_that.subscriptionInfo,_that.autoUpdate,_that.selectedMap,_that.unfoldSet,_that.extendType,_that.scriptId,_that.matchTarget,_that.order,_that.overrides);case _:
+return $default(_that.id,_that.type,_that.label,_that.managed,_that.currentGroupName,_that.url,_that.ageSecretKey,_that.lastUpdateDate,_that.autoUpdateDuration,_that.subscriptionInfo,_that.autoUpdate,_that.selectedMap,_that.unfoldSet,_that.extendType,_that.scriptId,_that.matchTarget,_that.order,_that.overrides);case _:
   return orElse();
 
 }
@@ -496,10 +509,10 @@ return $default(_that.id,_that.type,_that.label,_that.currentGroupName,_that.url
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  ProfileType type,  String label,  String? currentGroupName,  String url,  String ageSecretKey,  DateTime? lastUpdateDate,  Duration autoUpdateDuration,  SubscriptionInfo? subscriptionInfo,  bool autoUpdate,  Map<String, String> selectedMap,  Set<String> unfoldSet,  ExtendType extendType,  int? scriptId,  String? matchTarget,  int? order, @JsonKey(fromJson: ProfileOverrides.safeFromJson)  ProfileOverrides overrides)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  ProfileType type,  String label,  ManagedProfileInfo? managed,  String? currentGroupName,  String url,  String ageSecretKey,  DateTime? lastUpdateDate,  Duration autoUpdateDuration,  SubscriptionInfo? subscriptionInfo,  bool autoUpdate,  Map<String, String> selectedMap,  Set<String> unfoldSet,  ExtendType extendType,  int? scriptId,  String? matchTarget,  int? order, @JsonKey(fromJson: ProfileOverrides.safeFromJson)  ProfileOverrides overrides)  $default,) {final _that = this;
 switch (_that) {
 case _Profile():
-return $default(_that.id,_that.type,_that.label,_that.currentGroupName,_that.url,_that.ageSecretKey,_that.lastUpdateDate,_that.autoUpdateDuration,_that.subscriptionInfo,_that.autoUpdate,_that.selectedMap,_that.unfoldSet,_that.extendType,_that.scriptId,_that.matchTarget,_that.order,_that.overrides);case _:
+return $default(_that.id,_that.type,_that.label,_that.managed,_that.currentGroupName,_that.url,_that.ageSecretKey,_that.lastUpdateDate,_that.autoUpdateDuration,_that.subscriptionInfo,_that.autoUpdate,_that.selectedMap,_that.unfoldSet,_that.extendType,_that.scriptId,_that.matchTarget,_that.order,_that.overrides);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -516,10 +529,10 @@ return $default(_that.id,_that.type,_that.label,_that.currentGroupName,_that.url
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  ProfileType type,  String label,  String? currentGroupName,  String url,  String ageSecretKey,  DateTime? lastUpdateDate,  Duration autoUpdateDuration,  SubscriptionInfo? subscriptionInfo,  bool autoUpdate,  Map<String, String> selectedMap,  Set<String> unfoldSet,  ExtendType extendType,  int? scriptId,  String? matchTarget,  int? order, @JsonKey(fromJson: ProfileOverrides.safeFromJson)  ProfileOverrides overrides)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  ProfileType type,  String label,  ManagedProfileInfo? managed,  String? currentGroupName,  String url,  String ageSecretKey,  DateTime? lastUpdateDate,  Duration autoUpdateDuration,  SubscriptionInfo? subscriptionInfo,  bool autoUpdate,  Map<String, String> selectedMap,  Set<String> unfoldSet,  ExtendType extendType,  int? scriptId,  String? matchTarget,  int? order, @JsonKey(fromJson: ProfileOverrides.safeFromJson)  ProfileOverrides overrides)?  $default,) {final _that = this;
 switch (_that) {
 case _Profile() when $default != null:
-return $default(_that.id,_that.type,_that.label,_that.currentGroupName,_that.url,_that.ageSecretKey,_that.lastUpdateDate,_that.autoUpdateDuration,_that.subscriptionInfo,_that.autoUpdate,_that.selectedMap,_that.unfoldSet,_that.extendType,_that.scriptId,_that.matchTarget,_that.order,_that.overrides);case _:
+return $default(_that.id,_that.type,_that.label,_that.managed,_that.currentGroupName,_that.url,_that.ageSecretKey,_that.lastUpdateDate,_that.autoUpdateDuration,_that.subscriptionInfo,_that.autoUpdate,_that.selectedMap,_that.unfoldSet,_that.extendType,_that.scriptId,_that.matchTarget,_that.order,_that.overrides);case _:
   return null;
 
 }
@@ -531,12 +544,13 @@ return $default(_that.id,_that.type,_that.label,_that.currentGroupName,_that.url
 @JsonSerializable()
 
 class _Profile implements Profile {
-  const _Profile({required this.id, this.type = ProfileType.file, this.label = '', this.currentGroupName, this.url = '', this.ageSecretKey = '', this.lastUpdateDate, required this.autoUpdateDuration, this.subscriptionInfo, this.autoUpdate = true,  Map<String, String> selectedMap = const {},  Set<String> unfoldSet = const {}, this.extendType = ExtendType.standard, this.scriptId, this.matchTarget, this.order, @JsonKey(fromJson: ProfileOverrides.safeFromJson) this.overrides = const ProfileOverrides()}): _selectedMap = selectedMap,_unfoldSet = unfoldSet;
+  const _Profile({required this.id, this.type = ProfileType.file, this.label = '', this.managed, this.currentGroupName, this.url = '', this.ageSecretKey = '', this.lastUpdateDate, required this.autoUpdateDuration, this.subscriptionInfo, this.autoUpdate = true,  Map<String, String> selectedMap = const {},  Set<String> unfoldSet = const {}, this.extendType = ExtendType.standard, this.scriptId, this.matchTarget, this.order, @JsonKey(fromJson: ProfileOverrides.safeFromJson) this.overrides = const ProfileOverrides()}): _selectedMap = selectedMap,_unfoldSet = unfoldSet;
   factory _Profile.fromJson(Map<String, dynamic> json) => _$ProfileFromJson(json);
 
 @override final  int id;
 @override@JsonKey() final  ProfileType type;
 @override@JsonKey() final  String label;
+@override final  ManagedProfileInfo? managed;
 @override final  String? currentGroupName;
 @override@JsonKey() final  String url;
 @override@JsonKey() final  String ageSecretKey;
@@ -577,18 +591,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Profile&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.label, label) || other.label == label)&&(identical(other.currentGroupName, currentGroupName) || other.currentGroupName == currentGroupName)&&(identical(other.url, url) || other.url == url)&&(identical(other.ageSecretKey, ageSecretKey) || other.ageSecretKey == ageSecretKey)&&(identical(other.lastUpdateDate, lastUpdateDate) || other.lastUpdateDate == lastUpdateDate)&&(identical(other.autoUpdateDuration, autoUpdateDuration) || other.autoUpdateDuration == autoUpdateDuration)&&(identical(other.subscriptionInfo, subscriptionInfo) || other.subscriptionInfo == subscriptionInfo)&&(identical(other.autoUpdate, autoUpdate) || other.autoUpdate == autoUpdate)&&const DeepCollectionEquality().equals(other.selectedMap, _selectedMap)&&const DeepCollectionEquality().equals(other.unfoldSet, _unfoldSet)&&(identical(other.extendType, extendType) || other.extendType == extendType)&&(identical(other.scriptId, scriptId) || other.scriptId == scriptId)&&(identical(other.matchTarget, matchTarget) || other.matchTarget == matchTarget)&&(identical(other.order, order) || other.order == order)&&(identical(other.overrides, overrides) || other.overrides == overrides));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Profile&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.label, label) || other.label == label)&&(identical(other.managed, managed) || other.managed == managed)&&(identical(other.currentGroupName, currentGroupName) || other.currentGroupName == currentGroupName)&&(identical(other.url, url) || other.url == url)&&(identical(other.ageSecretKey, ageSecretKey) || other.ageSecretKey == ageSecretKey)&&(identical(other.lastUpdateDate, lastUpdateDate) || other.lastUpdateDate == lastUpdateDate)&&(identical(other.autoUpdateDuration, autoUpdateDuration) || other.autoUpdateDuration == autoUpdateDuration)&&(identical(other.subscriptionInfo, subscriptionInfo) || other.subscriptionInfo == subscriptionInfo)&&(identical(other.autoUpdate, autoUpdate) || other.autoUpdate == autoUpdate)&&const DeepCollectionEquality().equals(other.selectedMap, _selectedMap)&&const DeepCollectionEquality().equals(other.unfoldSet, _unfoldSet)&&(identical(other.extendType, extendType) || other.extendType == extendType)&&(identical(other.scriptId, scriptId) || other.scriptId == scriptId)&&(identical(other.matchTarget, matchTarget) || other.matchTarget == matchTarget)&&(identical(other.order, order) || other.order == order)&&(identical(other.overrides, overrides) || other.overrides == overrides));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,type,label,currentGroupName,url,ageSecretKey,lastUpdateDate,autoUpdateDuration,subscriptionInfo,autoUpdate,const DeepCollectionEquality().hash(_selectedMap),const DeepCollectionEquality().hash(_unfoldSet),extendType,scriptId,matchTarget,order,overrides);
+    return Object.hash(runtimeType,id,type,label,managed,currentGroupName,url,ageSecretKey,lastUpdateDate,autoUpdateDuration,subscriptionInfo,autoUpdate,const DeepCollectionEquality().hash(_selectedMap),const DeepCollectionEquality().hash(_unfoldSet),extendType,scriptId,matchTarget,order,overrides);
 }
 
 @override
 String toString() {
-    return 'Profile(id: $id, type: $type, label: $label, currentGroupName: $currentGroupName, url: $url, ageSecretKey: $ageSecretKey, lastUpdateDate: $lastUpdateDate, autoUpdateDuration: $autoUpdateDuration, subscriptionInfo: $subscriptionInfo, autoUpdate: $autoUpdate, selectedMap: $selectedMap, unfoldSet: $unfoldSet, extendType: $extendType, scriptId: $scriptId, matchTarget: $matchTarget, order: $order, overrides: $overrides)';
+    return 'Profile(id: $id, type: $type, label: $label, managed: $managed, currentGroupName: $currentGroupName, url: $url, ageSecretKey: $ageSecretKey, lastUpdateDate: $lastUpdateDate, autoUpdateDuration: $autoUpdateDuration, subscriptionInfo: $subscriptionInfo, autoUpdate: $autoUpdate, selectedMap: $selectedMap, unfoldSet: $unfoldSet, extendType: $extendType, scriptId: $scriptId, matchTarget: $matchTarget, order: $order, overrides: $overrides)';
 }
 
 
@@ -599,11 +613,11 @@ abstract mixin class _$ProfileCopyWith<$Res> implements $ProfileCopyWith<$Res> {
   factory _$ProfileCopyWith(_Profile value, $Res Function(_Profile) _then) = __$ProfileCopyWithImpl;
 @override @useResult
 $Res call({
- int id, ProfileType type, String label, String? currentGroupName, String url, String ageSecretKey, DateTime? lastUpdateDate, Duration autoUpdateDuration, SubscriptionInfo? subscriptionInfo, bool autoUpdate, Map<String, String> selectedMap, Set<String> unfoldSet, ExtendType extendType, int? scriptId, String? matchTarget, int? order,@JsonKey(fromJson: ProfileOverrides.safeFromJson) ProfileOverrides overrides
+ int id, ProfileType type, String label, ManagedProfileInfo? managed, String? currentGroupName, String url, String ageSecretKey, DateTime? lastUpdateDate, Duration autoUpdateDuration, SubscriptionInfo? subscriptionInfo, bool autoUpdate, Map<String, String> selectedMap, Set<String> unfoldSet, ExtendType extendType, int? scriptId, String? matchTarget, int? order,@JsonKey(fromJson: ProfileOverrides.safeFromJson) ProfileOverrides overrides
 });
 
 
-@override $SubscriptionInfoCopyWith<$Res>? get subscriptionInfo;@override $ProfileOverridesCopyWith<$Res> get overrides;
+@override $ManagedProfileInfoCopyWith<$Res>? get managed;@override $SubscriptionInfoCopyWith<$Res>? get subscriptionInfo;@override $ProfileOverridesCopyWith<$Res> get overrides;
 
 }
 /// @nodoc
@@ -616,12 +630,13 @@ class __$ProfileCopyWithImpl<$Res>
 
 /// Create a copy of Profile
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? type = null,Object? label = null,Object? currentGroupName = freezed,Object? url = null,Object? ageSecretKey = null,Object? lastUpdateDate = freezed,Object? autoUpdateDuration = null,Object? subscriptionInfo = freezed,Object? autoUpdate = null,Object? selectedMap = null,Object? unfoldSet = null,Object? extendType = null,Object? scriptId = freezed,Object? matchTarget = freezed,Object? order = freezed,Object? overrides = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? type = null,Object? label = null,Object? managed = freezed,Object? currentGroupName = freezed,Object? url = null,Object? ageSecretKey = null,Object? lastUpdateDate = freezed,Object? autoUpdateDuration = null,Object? subscriptionInfo = freezed,Object? autoUpdate = null,Object? selectedMap = null,Object? unfoldSet = null,Object? extendType = null,Object? scriptId = freezed,Object? matchTarget = freezed,Object? order = freezed,Object? overrides = null,}) {
   return _then(_Profile(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as ProfileType,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
-as String,currentGroupName: freezed == currentGroupName ? _self.currentGroupName : currentGroupName // ignore: cast_nullable_to_non_nullable
+as String,managed: freezed == managed ? _self.managed : managed // ignore: cast_nullable_to_non_nullable
+as ManagedProfileInfo?,currentGroupName: freezed == currentGroupName ? _self.currentGroupName : currentGroupName // ignore: cast_nullable_to_non_nullable
 as String?,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,ageSecretKey: null == ageSecretKey ? _self.ageSecretKey : ageSecretKey // ignore: cast_nullable_to_non_nullable
 as String,lastUpdateDate: freezed == lastUpdateDate ? _self.lastUpdateDate : lastUpdateDate // ignore: cast_nullable_to_non_nullable
@@ -643,6 +658,18 @@ as ProfileOverrides,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
+$ManagedProfileInfoCopyWith<$Res>? get managed {
+    if (_self.managed == null) {
+    return null;
+  }
+
+  return $ManagedProfileInfoCopyWith<$Res>(_self.managed!, (value) {
+    return _then(_self.copyWith(managed: value));
+  });
+}/// Create a copy of Profile
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
 $SubscriptionInfoCopyWith<$Res>? get subscriptionInfo {
     if (_self.subscriptionInfo == null) {
     return null;
@@ -661,6 +688,315 @@ $ProfileOverridesCopyWith<$Res> get overrides {
     return _then(_self.copyWith(overrides: value));
   });
 }
+}
+
+
+/// @nodoc
+mixin _$ManagedProfileInfo {
+
+ String get accountRef; DateTime? get catalogAt; DateTime? get fullRefreshAt; Map<String, String> get lineNames; Map<String, String> get countryNames; Map<String, DateTime> get checkedAt; bool get selectionRequired; bool get requiresLogin;
+/// Create a copy of ManagedProfileInfo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ManagedProfileInfoCopyWith<ManagedProfileInfo> get copyWith => _$ManagedProfileInfoCopyWithImpl<ManagedProfileInfo>(this as ManagedProfileInfo, _$identity);
+
+  /// Serializes this ManagedProfileInfo to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as ManagedProfileInfo;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ManagedProfileInfo&&(identical(other.accountRef, _this.accountRef) || other.accountRef == _this.accountRef)&&(identical(other.catalogAt, _this.catalogAt) || other.catalogAt == _this.catalogAt)&&(identical(other.fullRefreshAt, _this.fullRefreshAt) || other.fullRefreshAt == _this.fullRefreshAt)&&const DeepCollectionEquality().equals(other.lineNames, _this.lineNames)&&const DeepCollectionEquality().equals(other.countryNames, _this.countryNames)&&const DeepCollectionEquality().equals(other.checkedAt, _this.checkedAt)&&(identical(other.selectionRequired, _this.selectionRequired) || other.selectionRequired == _this.selectionRequired)&&(identical(other.requiresLogin, _this.requiresLogin) || other.requiresLogin == _this.requiresLogin));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as ManagedProfileInfo;
+  return Object.hash(runtimeType,_this.accountRef,_this.catalogAt,_this.fullRefreshAt,const DeepCollectionEquality().hash(_this.lineNames),const DeepCollectionEquality().hash(_this.countryNames),const DeepCollectionEquality().hash(_this.checkedAt),_this.selectionRequired,_this.requiresLogin);
+}
+
+@override
+String toString() {
+  final _this = this as ManagedProfileInfo;
+  return 'ManagedProfileInfo(accountRef: ${_this.accountRef}, catalogAt: ${_this.catalogAt}, fullRefreshAt: ${_this.fullRefreshAt}, lineNames: ${_this.lineNames}, countryNames: ${_this.countryNames}, checkedAt: ${_this.checkedAt}, selectionRequired: ${_this.selectionRequired}, requiresLogin: ${_this.requiresLogin})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ManagedProfileInfoCopyWith<$Res>  {
+  factory $ManagedProfileInfoCopyWith(ManagedProfileInfo value, $Res Function(ManagedProfileInfo) _then) = _$ManagedProfileInfoCopyWithImpl;
+@useResult
+$Res call({
+ String accountRef, DateTime? catalogAt, DateTime? fullRefreshAt, Map<String, String> lineNames, Map<String, String> countryNames, Map<String, DateTime> checkedAt, bool selectionRequired, bool requiresLogin
+});
+
+
+
+
+}
+/// @nodoc
+class _$ManagedProfileInfoCopyWithImpl<$Res>
+    implements $ManagedProfileInfoCopyWith<$Res> {
+  _$ManagedProfileInfoCopyWithImpl(this._self, this._then);
+
+  final ManagedProfileInfo _self;
+  final $Res Function(ManagedProfileInfo) _then;
+
+/// Create a copy of ManagedProfileInfo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? accountRef = null,Object? catalogAt = freezed,Object? fullRefreshAt = freezed,Object? lineNames = null,Object? countryNames = null,Object? checkedAt = null,Object? selectionRequired = null,Object? requiresLogin = null,}) {
+  return _then(ManagedProfileInfo(
+accountRef: null == accountRef ? _self.accountRef : accountRef // ignore: cast_nullable_to_non_nullable
+as String,catalogAt: freezed == catalogAt ? _self.catalogAt : catalogAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,fullRefreshAt: freezed == fullRefreshAt ? _self.fullRefreshAt : fullRefreshAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,lineNames: null == lineNames ? _self.lineNames : lineNames // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,countryNames: null == countryNames ? _self.countryNames : countryNames // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,checkedAt: null == checkedAt ? _self.checkedAt : checkedAt // ignore: cast_nullable_to_non_nullable
+as Map<String, DateTime>,selectionRequired: null == selectionRequired ? _self.selectionRequired : selectionRequired // ignore: cast_nullable_to_non_nullable
+as bool,requiresLogin: null == requiresLogin ? _self.requiresLogin : requiresLogin // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ManagedProfileInfo].
+extension ManagedProfileInfoPatterns on ManagedProfileInfo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ManagedProfileInfo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ManagedProfileInfo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ManagedProfileInfo value)  $default,){
+final _that = this;
+switch (_that) {
+case _ManagedProfileInfo():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ManagedProfileInfo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ManagedProfileInfo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String accountRef,  DateTime? catalogAt,  DateTime? fullRefreshAt,  Map<String, String> lineNames,  Map<String, String> countryNames,  Map<String, DateTime> checkedAt,  bool selectionRequired,  bool requiresLogin)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ManagedProfileInfo() when $default != null:
+return $default(_that.accountRef,_that.catalogAt,_that.fullRefreshAt,_that.lineNames,_that.countryNames,_that.checkedAt,_that.selectionRequired,_that.requiresLogin);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String accountRef,  DateTime? catalogAt,  DateTime? fullRefreshAt,  Map<String, String> lineNames,  Map<String, String> countryNames,  Map<String, DateTime> checkedAt,  bool selectionRequired,  bool requiresLogin)  $default,) {final _that = this;
+switch (_that) {
+case _ManagedProfileInfo():
+return $default(_that.accountRef,_that.catalogAt,_that.fullRefreshAt,_that.lineNames,_that.countryNames,_that.checkedAt,_that.selectionRequired,_that.requiresLogin);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String accountRef,  DateTime? catalogAt,  DateTime? fullRefreshAt,  Map<String, String> lineNames,  Map<String, String> countryNames,  Map<String, DateTime> checkedAt,  bool selectionRequired,  bool requiresLogin)?  $default,) {final _that = this;
+switch (_that) {
+case _ManagedProfileInfo() when $default != null:
+return $default(_that.accountRef,_that.catalogAt,_that.fullRefreshAt,_that.lineNames,_that.countryNames,_that.checkedAt,_that.selectionRequired,_that.requiresLogin);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ManagedProfileInfo implements ManagedProfileInfo {
+  const _ManagedProfileInfo({this.accountRef = 'heysocks', this.catalogAt, this.fullRefreshAt,  Map<String, String> lineNames = const {},  Map<String, String> countryNames = const {},  Map<String, DateTime> checkedAt = const {}, this.selectionRequired = false, this.requiresLogin = true}): _lineNames = lineNames,_countryNames = countryNames,_checkedAt = checkedAt;
+  factory _ManagedProfileInfo.fromJson(Map<String, dynamic> json) => _$ManagedProfileInfoFromJson(json);
+
+@override@JsonKey() final  String accountRef;
+@override final  DateTime? catalogAt;
+@override final  DateTime? fullRefreshAt;
+ final  Map<String, String> _lineNames;
+@override@JsonKey() Map<String, String> get lineNames {
+  if (_lineNames is EqualUnmodifiableMapView) return _lineNames;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_lineNames);
+}
+
+ final  Map<String, String> _countryNames;
+@override@JsonKey() Map<String, String> get countryNames {
+  if (_countryNames is EqualUnmodifiableMapView) return _countryNames;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_countryNames);
+}
+
+ final  Map<String, DateTime> _checkedAt;
+@override@JsonKey() Map<String, DateTime> get checkedAt {
+  if (_checkedAt is EqualUnmodifiableMapView) return _checkedAt;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_checkedAt);
+}
+
+@override@JsonKey() final  bool selectionRequired;
+@override@JsonKey() final  bool requiresLogin;
+
+/// Create a copy of ManagedProfileInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ManagedProfileInfoCopyWith<_ManagedProfileInfo> get copyWith => __$ManagedProfileInfoCopyWithImpl<_ManagedProfileInfo>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ManagedProfileInfoToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ManagedProfileInfo&&(identical(other.accountRef, accountRef) || other.accountRef == accountRef)&&(identical(other.catalogAt, catalogAt) || other.catalogAt == catalogAt)&&(identical(other.fullRefreshAt, fullRefreshAt) || other.fullRefreshAt == fullRefreshAt)&&const DeepCollectionEquality().equals(other.lineNames, _lineNames)&&const DeepCollectionEquality().equals(other.countryNames, _countryNames)&&const DeepCollectionEquality().equals(other.checkedAt, _checkedAt)&&(identical(other.selectionRequired, selectionRequired) || other.selectionRequired == selectionRequired)&&(identical(other.requiresLogin, requiresLogin) || other.requiresLogin == requiresLogin));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,accountRef,catalogAt,fullRefreshAt,const DeepCollectionEquality().hash(_lineNames),const DeepCollectionEquality().hash(_countryNames),const DeepCollectionEquality().hash(_checkedAt),selectionRequired,requiresLogin);
+}
+
+@override
+String toString() {
+    return 'ManagedProfileInfo(accountRef: $accountRef, catalogAt: $catalogAt, fullRefreshAt: $fullRefreshAt, lineNames: $lineNames, countryNames: $countryNames, checkedAt: $checkedAt, selectionRequired: $selectionRequired, requiresLogin: $requiresLogin)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ManagedProfileInfoCopyWith<$Res> implements $ManagedProfileInfoCopyWith<$Res> {
+  factory _$ManagedProfileInfoCopyWith(_ManagedProfileInfo value, $Res Function(_ManagedProfileInfo) _then) = __$ManagedProfileInfoCopyWithImpl;
+@override @useResult
+$Res call({
+ String accountRef, DateTime? catalogAt, DateTime? fullRefreshAt, Map<String, String> lineNames, Map<String, String> countryNames, Map<String, DateTime> checkedAt, bool selectionRequired, bool requiresLogin
+});
+
+
+
+
+}
+/// @nodoc
+class __$ManagedProfileInfoCopyWithImpl<$Res>
+    implements _$ManagedProfileInfoCopyWith<$Res> {
+  __$ManagedProfileInfoCopyWithImpl(this._self, this._then);
+
+  final _ManagedProfileInfo _self;
+  final $Res Function(_ManagedProfileInfo) _then;
+
+/// Create a copy of ManagedProfileInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? accountRef = null,Object? catalogAt = freezed,Object? fullRefreshAt = freezed,Object? lineNames = null,Object? countryNames = null,Object? checkedAt = null,Object? selectionRequired = null,Object? requiresLogin = null,}) {
+  return _then(_ManagedProfileInfo(
+accountRef: null == accountRef ? _self.accountRef : accountRef // ignore: cast_nullable_to_non_nullable
+as String,catalogAt: freezed == catalogAt ? _self.catalogAt : catalogAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,fullRefreshAt: freezed == fullRefreshAt ? _self.fullRefreshAt : fullRefreshAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,lineNames: null == lineNames ? _self._lineNames : lineNames // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,countryNames: null == countryNames ? _self._countryNames : countryNames // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,checkedAt: null == checkedAt ? _self._checkedAt : checkedAt // ignore: cast_nullable_to_non_nullable
+as Map<String, DateTime>,selectionRequired: null == selectionRequired ? _self.selectionRequired : selectionRequired // ignore: cast_nullable_to_non_nullable
+as bool,requiresLogin: null == requiresLogin ? _self.requiresLogin : requiresLogin // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
 }
 
 /// @nodoc

@@ -89,7 +89,7 @@ final class CoreOptionsProvider
   }
 }
 
-String _$coreOptionsHash() => r'ef7cb84b1c8ad89180f56c91cf863376c1ff9db5';
+String _$coreOptionsHash() => r'43945407c97ebce7e8106973f53ca83ce95c861a';
 
 @ProviderFor(setupPatch)
 final setupPatchProvider = SetupPatchProvider._();
@@ -478,7 +478,7 @@ final class SharedStateProvider
   }
 }
 
-String _$sharedStateHash() => r'bad20df240acfd1b384cad3655a58987a992a4ca';
+String _$sharedStateHash() => r'922e10d9a44fde48c84187dd75a08a606e77ed27';
 
 @ProviderFor(vpnRouteAddress)
 final vpnRouteAddressProvider = VpnRouteAddressProvider._();
@@ -2186,7 +2186,7 @@ final class ProxiesListStateProvider
   }
 }
 
-String _$proxiesListStateHash() => r'212d21f79e9c149076e13d1d19ccd83ccb4b471b';
+String _$proxiesListStateHash() => r'98c0c5cd12bd4212a6a21d273d22f1bd841e971b';
 
 @ProviderFor(proxiesTabState)
 final proxiesTabStateProvider = ProxiesTabStateProvider._();
@@ -2228,7 +2228,7 @@ final class ProxiesTabStateProvider
   }
 }
 
-String _$proxiesTabStateHash() => r'e4eccd77c3848489c8ec620f4e515cec7cdd5a31';
+String _$proxiesTabStateHash() => r'c02051c71db38b5351f3b0754f546f4ff5fc41bc';
 
 @ProviderFor(isStart)
 final isStartProvider = IsStartProvider._();
@@ -3659,7 +3659,7 @@ final class SetupStateProvider
   }
 }
 
-String _$setupStateHash() => r'4cfdb0a779dc8097c8c1027b73252f19f925a3ad';
+String _$setupStateHash() => r'e8c7cc4742b6e4cf4227071dc01ec6a943334dd0';
 
 final class SetupStateFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<SetupState>, int?> {
@@ -3728,4 +3728,4 @@ final class ProfileProvidersProvider
   }
 }
 
-String _$profileProvidersHash() => r'689856f32a4b40e6a26b1eedd16db418d140371a';
+String _$profileProvidersHash() => r'5640c4a0988c40ad2583d6742fe37ebc8f77de3a';

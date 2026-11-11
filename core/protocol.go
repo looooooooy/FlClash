@@ -16,6 +16,26 @@ type CoreMethod string
 // Named area.verb. A method's arguments are an object or nothing, and a
 // command answers null: whatever goes wrong is a MethodError.
 const (
+	accountSuspendMethod         CoreMethod = "account.suspend"
+	accountInitializeMethod      CoreMethod = "account.initialize"
+	accountDiscoverMethod        CoreMethod = "account.discover"
+	accountLoginMethod           CoreMethod = "account.login"
+	accountCaptchaMethod         CoreMethod = "account.captcha"
+	accountValidateCaptchaMethod CoreMethod = "account.validateCaptcha"
+	accountRestoreMethod         CoreMethod = "account.restore"
+	accountRefreshMethod         CoreMethod = "account.refresh"
+	accountStateMethod           CoreMethod = "account.state"
+	accountSnapshotMethod        CoreMethod = "account.snapshot"
+	accountWatchMethod           CoreMethod = "account.watch"
+	accountDeviceStartMethod     CoreMethod = "account.deviceStart"
+	accountDevicePollMethod      CoreMethod = "account.devicePoll"
+	accountDeviceCancelMethod    CoreMethod = "account.deviceCancel"
+	accountCatalogMethod         CoreMethod = "account.catalog"
+	accountConfigMethod          CoreMethod = "account.config"
+	accountBuildProfileMethod    CoreMethod = "account.buildProfile"
+	accountLogoutMethod          CoreMethod = "account.logout"
+	accountCancelMethod          CoreMethod = "account.cancel"
+
 	coreInitMethod        CoreMethod = "core.init"
 	coreInitializedMethod CoreMethod = "core.initialized"
 	coreGCMethod          CoreMethod = "core.gc"

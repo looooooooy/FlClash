@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'account.dart';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/features/form/form.dart';
@@ -131,6 +132,11 @@ class AddProfileMenu extends ConsumerWidget {
       targetBuilder: builder,
       popupBuilder: (_) => PopupMenu(
         items: [
+          PopupMenuItem(
+            glyph: AppGlyphs.key,
+            label: appLocalizations.heysocksAccount,
+            onPressed: () => showHeySocksAccount(context),
+          ),
           PopupMenuItem(
             glyph: AppGlyphs.qrCode,
             label: appLocalizations.qrcode,

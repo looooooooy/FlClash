@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:fl_clash/accounts/store.dart';
+import 'package:fl_clash/accounts/service.dart';
+import '../accounts/fakes.dart';
 import 'dart:io';
 
 import 'package:drift/native.dart';
@@ -52,7 +55,26 @@ void main() {
 
   // AppStateManager's listen keeps the settings alive while a restore awaits.
   ProviderContainer buildContainer() {
-    final container = ProviderContainer()..listen(configProvider, (_, _) {});
+    final container = ProviderContainer(
+      overrides: [
+        privateAccountStoreProvider.overrideWith(
+          (_) => ProtectedAccountStore(
+            metadata: FakeMetadata(),
+            secrets: FakeSecrets(),
+          ),
+        ),
+        accountSessionServiceProvider.overrideWith((ref) {
+          final service = AccountService(
+            gateway: FakeGateway(),
+            store: FakeStore(),
+          );
+          ref.onDispose(() {
+            service.dispose();
+          });
+          return service;
+        }),
+      ],
+    )..listen(configProvider, (_, _) {});
     addTearDown(container.dispose);
     return container;
   }
@@ -63,6 +85,57 @@ void main() {
   Map<String, Object?> configMapOf(ProviderContainer container) =>
       jsonDecode(jsonEncode(container.read(configProvider).toJson()))
           as Map<String, Object?>;
+
+  test(
+    'restored managed metadata requires login and rejects archive YAML',
+    () async {
+      final container = buildContainer();
+      final staging = Directory('${home.path}/managed-restore')
+        ..createSync(recursive: true);
+      final profile = _profile(901, 'HeySocks').copyWith(
+        type: ProfileType.heysocks,
+        managed: const ManagedProfileInfo(requiresLogin: false),
+      );
+      final staged = File(
+        BackupEntries.resolve(staging.path, BackupEntries.profile(profile.id)),
+      );
+      staged.parent.createSync(recursive: true);
+      staged.writeAsStringSync('synthetic-private-credential');
+      await actionOf(container).applyRestore(
+        MigrationData(profiles: [profile]),
+        RestoreOption.onlyProfiles,
+        stagingDirPath: staging.path,
+      );
+      final restored = await database.profilesDao.get(profile.id);
+      expect(restored!.managed!.requiresLogin, isTrue);
+      expect(restored.selectedMap, isEmpty);
+      expect(
+        await File(await appPath.getProfilePath('${profile.id}')).exists(),
+        isFalse,
+      );
+      expect(
+        await container.read(privateAccountStoreProvider).privateProfileIds(),
+        contains(profile.id),
+      );
+    },
+  );
+
+  test(
+    'private tombstone cannot be restored as an exportable static source',
+    () async {
+      final container = buildContainer();
+      await container
+          .read(privateAccountStoreProvider)
+          .registerPrivateProfile(902);
+      await actionOf(container).applyRestore(
+        MigrationData(profiles: [_profile(902, 'Restored')]),
+        RestoreOption.onlyProfiles,
+      );
+      final restored = await database.profilesDao.get(902);
+      expect(restored!.type, ProfileType.heysocks);
+      expect(restored.managed!.requiresLogin, isTrue);
+    },
+  );
 
   group('backup and restore round trip', () {
     late Directory kept;

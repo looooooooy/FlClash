@@ -160,6 +160,8 @@ Map<String, int> profileProviders(Ref ref) {
   final profiles = ref.watch(profilesProvider);
   return {
     for (final profile in profiles)
-      if (profile.type != ProfileType.custom) profile.realLabel: profile.id,
+      if (profile.type != ProfileType.custom &&
+          profile.type != ProfileType.heysocks)
+        profile.realLabel: profile.id,
   };
 }

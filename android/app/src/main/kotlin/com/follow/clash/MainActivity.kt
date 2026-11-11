@@ -1,5 +1,6 @@
 package com.follow.clash
 
+import com.follow.clash.plugins.AccountChallengeFactory
 import com.follow.clash.plugins.AppPlugin
 import com.follow.clash.plugins.BatteryPlugin
 import com.follow.clash.plugins.ServicePlugin
@@ -14,6 +15,10 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(BatteryPlugin())
         flutterEngine.plugins.add(ServicePlugin())
         flutterEngine.plugins.add(TilePlugin())
+        flutterEngine.platformViewsController.registry.registerViewFactory(
+            "com.follow.clash/account-challenge",
+            AccountChallengeFactory(flutterEngine.dartExecutor.binaryMessenger),
+        )
         ServiceState.attachFlutterEngine(flutterEngine)
     }
 
