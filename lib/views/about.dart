@@ -182,7 +182,7 @@ class _AboutHero extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            globalState.packageInfo.appName,
+            appDisplayName,
             style: AppTextStyle.title2.of(context, emphasized: true),
           ),
           const SizedBox(height: 10),

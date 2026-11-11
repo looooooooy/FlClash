@@ -222,11 +222,21 @@ jobs:
       - name: Build Windows installer and archive
         run: dart setup.dart windows --env pre -v
 
+      - name: Name Windows downloads
+        shell: pwsh
+        run: |
+          $packages = Get-ChildItem -LiteralPath dist -File |
+            Where-Object { $_.Name -match '^FlClash-.*\.(exe|zip)$' }
+          if ('.exe' -notin $packages.Extension -or '.zip' -notin $packages.Extension) {
+            throw 'Expected both the Windows installer and portable ZIP in dist.'
+          }
+          $packages | Rename-Item -NewName { $_.Name -replace '^FlClash-', '云渡-' } -ErrorAction Stop
+
       - name: Upload Windows package
         uses: actions/upload-artifact@v4
         with:
-          name: FlClash-windows-${{ github.sha }}
-          path: dist/*
+          name: 云渡-windows-${{ github.sha }}
+          path: dist/云渡-*
           if-no-files-found: error
           retention-days: 14
 

@@ -21,12 +21,12 @@ cask "flclash" do
 
   depends_on :macos
 
-  app "FlClash.app"
+  app "云渡.app"
 
   postflight_steps do
     run "/usr/bin/xattr",
-        args:           ["-rd", "com.apple.quarantine", "{{appdir}}/FlClash.app"],
-        writable_paths: ["FlClash.app"],
+        args:           ["-rd", "com.apple.quarantine", "{{appdir}}/云渡.app"],
+        writable_paths: ["云渡.app"],
         writable_base:  :appdir
   end
 

@@ -362,8 +362,8 @@ Windows runner for the helper's `windows-service` feature. On branch pushes a
 `desktop` job also compiles a debug build per desktop platform; a tag skips it,
 since its release matrix compiles the same native code. A `windows-package` job
 builds the Windows installer and ZIP on branch pushes and manual runs, then
-uploads them as a 14-day Actions artifact. Release builds run only in the public
-repository and start alongside the checks; `upload` publishes only once every
+uploads them as a 14-day Actions artifact named 云渡. Release builds run only
+in the public repository and start alongside the checks; `upload` publishes only once every
 build and every check job passes.
 
 `bash tool/check_plugins.sh` is that plugin gate, and CI runs the same script.

@@ -10,6 +10,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:flutter/widgets.dart';
 
 const appName = 'FlClash';
+const appDisplayName = '云渡';
 const appHelperService = 'FlClashHelperService';
 const coreManifestName = 'manifest.json';
 const browserUa =
