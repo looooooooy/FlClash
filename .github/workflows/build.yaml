@@ -169,10 +169,27 @@ jobs:
       - name: Build debug bundle
         run: flutter build ${{ matrix.platform }} --debug
 
-  windows-package:
-    name: Windows package
+  package:
+    name: Package ${{ matrix.platform }} ${{ matrix.arch }}
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/v'))
-    runs-on: windows-2022
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+            arch: arm64
+            format: apk
+            args: --arch arm64
+          - platform: macos
+            os: macos-latest
+            arch: arm64
+            format: dmg
+          - platform: windows
+            os: windows-2022
+            arch: x64
+            format: exe
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -180,6 +197,7 @@ jobs:
           submodules: recursive
 
       - name: Enable git long paths
+        if: matrix.platform == 'windows'
         run: git config --global core.longpaths true
 
       - name: Setup Go
@@ -191,9 +209,11 @@ jobs:
             plugins/setup/setup_hooks/lib/src/go_builder.dart
 
       - name: Setup Rust toolchain
+        if: matrix.platform == 'windows'
         uses: dtolnay/rust-toolchain@stable
 
       - name: Setup Rust cache
+        if: matrix.platform != 'android'
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
@@ -211,7 +231,51 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Setup Java
+        if: matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android NDK
+        if: matrix.platform == 'android'
+        uses: nttld/setup-ndk@v1
+        id: package-ndk
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          link-to-sdk: true
+
+      - name: Setup Gradle
+        if: matrix.platform == 'android'
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Configure APK signing
+        if: matrix.platform == 'android'
+        shell: bash
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [[ -z "$KEYSTORE" || -z "$KEY_ALIAS" || -z "$STORE_PASSWORD" || -z "$KEY_PASSWORD" ]]; then
+            echo 'Building an installable APK with the Gradle debug key.'
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE" | base64 --decode > android/app/keystore.jks
+          printf '\nkeyAlias=%s\nstorePassword=%s\nkeyPassword=%s\n' \
+            "$KEY_ALIAS" "$STORE_PASSWORD" "$KEY_PASSWORD" >> android/local.properties
+
+      - name: Setup Xcode
+        if: matrix.platform == 'macos'
+        run: |
+          test "$(uname -m)" = arm64
+          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
+          xcodebuild -version
+
       - name: Ensure Inno Setup is installed
+        if: matrix.platform == 'windows'
         shell: pwsh
         run: |
           if (-not (Get-Command ISCC.exe -ErrorAction SilentlyContinue)) {
@@ -219,24 +283,30 @@ jobs:
             Add-Content $env:GITHUB_PATH "${env:ProgramFiles(x86)}\Inno Setup 6"
           }
 
-      - name: Build Windows installer and archive
-        run: dart setup.dart windows --env pre -v
+      - name: Build package
+        env:
+          ANDROID_NDK_HOME: ${{ steps.package-ndk.outputs.ndk-path }}
+        run: dart setup.dart ${{ matrix.platform }} --env pre --targets ${{ matrix.format }} ${{ matrix.args }} -v
 
-      - name: Name Windows downloads
-        shell: pwsh
+      - name: Name download
+        shell: bash
+        env:
+          PACKAGE_EXTENSION: ${{ matrix.format }}
         run: |
-          $packages = Get-ChildItem -LiteralPath dist -File |
-            Where-Object { $_.Name -match '^FlClash-.*\.(exe|zip)$' }
-          if ('.exe' -notin $packages.Extension -or '.zip' -notin $packages.Extension) {
-            throw 'Expected both the Windows installer and portable ZIP in dist.'
-          }
-          $packages | Rename-Item -NewName { $_.Name -replace '^FlClash-', '云渡-' } -ErrorAction Stop
+          shopt -s nullglob
+          packages=(dist/FlClash-*."$PACKAGE_EXTENSION")
+          if ((${#packages[@]} != 1)); then
+            echo "Expected one .$PACKAGE_EXTENSION package in dist, got ${#packages[@]}." >&2
+            exit 1
+          fi
+          name="${packages[0]##*/}"
+          mv -- "${packages[0]}" "dist/云渡-${name#FlClash-}"
 
-      - name: Upload Windows package
+      - name: Upload package
         uses: actions/upload-artifact@v4
         with:
-          name: 云渡-windows-${{ github.sha }}
-          path: dist/云渡-*
+          name: 云渡-${{ matrix.platform }}-${{ matrix.arch }}-${{ github.sha }}
+          path: dist/云渡-*.${{ matrix.format }}
           if-no-files-found: error
           retention-days: 14
 
