@@ -311,7 +311,8 @@ class ProfileItem extends ConsumerWidget {
   }
 
   Future updateProfile(WidgetRef ref) async {
-    if (profile.type != ProfileType.url && profile.type != ProfileType.heysocks) {
+    if (profile.type != ProfileType.url &&
+        profile.type != ProfileType.heysocks) {
       return;
     }
     await globalState.loadingRun(() async {
