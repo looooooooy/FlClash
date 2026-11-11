@@ -362,8 +362,8 @@ Windows runner for the helper's `windows-service` feature. On branch pushes a
 `desktop` job also compiles a debug build per desktop platform; a tag skips it,
 since its release matrix compiles the same native code. On branch pushes and
 manual runs, the `package` matrix uploads an Android ARM64 APK, a macOS Apple
-Silicon DMG, and a Windows x64 installer. Each is a separate 云渡 artifact
-retained for 14 days. The APK uses the release signing secrets when all four
+Silicon DMG, and a Windows x64 installer. Each 云渡 file can be downloaded
+directly from Actions for 14 days. The APK uses the release signing secrets when all four
 are configured and the Gradle debug key otherwise. The upstream tag release
 matrix and its `upload` job publish only after its builds and checks pass.
 
