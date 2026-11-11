@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:win32_registry/win32_registry.dart';
 
 import 'print.dart';
@@ -81,6 +83,14 @@ class Protocol {
     return _instance!;
   }
 
+  void registerWindowsInBackground() {
+    unawaited(
+      compute(_registerWindowsProtocols, null).catchError((Object _) {
+        commonPrint.log('Windows protocol registration failed');
+      }),
+    );
+  }
+
   void register(String scheme) {
     final plan = ProtocolRegistrationPlan(
       scheme: scheme,
@@ -131,3 +141,9 @@ class Protocol {
 }
 
 final protocol = Protocol();
+
+void _registerWindowsProtocols(Object? _) {
+  for (final scheme in protocolSchemes) {
+    protocol.register(scheme);
+  }
+}

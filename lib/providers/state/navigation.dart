@@ -9,12 +9,24 @@ NavigationItemsState navigationItemsState(Ref ref) {
   final hasProxies = ref.watch(
     currentGroupsStateProvider.select((state) => state.value.isNotEmpty),
   );
+  final hasManagedLines = ref.watch(
+    currentProfileProvider.select(
+      (profile) =>
+          profile?.type == ProfileType.heysocks &&
+          profile?.managed?.lineNames.isNotEmpty == true,
+    ),
+  );
+  final mode = ref.watch(
+    patchClashConfigProvider.select((state) => state.mode),
+  );
   final isInit = ref.watch(initProvider);
   return NavigationItemsState(
     value:
         navigationPort?.getItems(
           openLogs: openLogs,
-          hasProxies: !isInit ? hasProfiles : hasProxies,
+          hasProxies: !isInit
+              ? hasProfiles
+              : hasProxies || (hasManagedLines && mode != Mode.direct),
         ) ??
         const [],
   );

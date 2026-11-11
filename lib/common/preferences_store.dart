@@ -26,6 +26,8 @@ class AtomicFilePreferencesStore extends SharedPreferencesStorePlatform {
     });
   }
 
+  Future<Object?> readValue(String key) async => (await _read())[key];
+
   Future<Map<String, Object>> _load() async {
     final file = File(await _path);
     if (!await file.exists()) {

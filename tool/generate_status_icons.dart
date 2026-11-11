@@ -8,6 +8,11 @@ const pngOutputDir = 'assets/images/tray/unix';
 const icoOutputDir = 'assets/images/tray/windows';
 const macosOutputDir = 'assets/images/tray/macos';
 const statusIconNames = ['status_1', 'status_2', 'status_3', 'status_4'];
+const windowsTrayColors = {
+  'status_1': '#8A96A8',
+  'status_2': '#24C8BA',
+  'status_3': '#42A5F5',
+};
 const macosStatusIconSources = {
   'status_1': '$sourceDir/glyph.svg',
   'status_4': '$sourceDir/status_4.svg',
@@ -39,9 +44,10 @@ Future<void> main() async {
         return;
       }
       await _writeTrayVariants(renderer, source, name, pngOutputDir);
+      final color = windowsTrayColors[name];
       await _writeIco(
         renderer,
-        source,
+        color == null ? source : await renderer.windowsGlyph(name, color),
         File('$icoOutputDir/$name.ico'),
         sizes: trayIcoSizes,
       );
@@ -161,6 +167,13 @@ class _Renderer {
       ),
     );
     return copy;
+  }
+
+  Future<File> windowsGlyph(String name, String color) async {
+    final svg = await File('$sourceDir/yundu_tray.svg').readAsString();
+    return File(
+      '${tempDir.path}/windows-$name.svg',
+    ).writeAsString(svg.replaceAll('currentColor', color));
   }
 
   String _basename(File file) => file.uri.pathSegments.last;

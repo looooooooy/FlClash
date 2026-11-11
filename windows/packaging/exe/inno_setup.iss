@@ -10,7 +10,7 @@ DefaultDirName={{INSTALL_DIR_NAME}}
 DisableProgramGroupPage=yes
 OutputDir=.
 OutputBaseFilename={{OUTPUT_BASE_FILENAME}}
-Compression=lzma
+Compression=lzma2/normal
 SolidCompression=yes
 SetupIconFile={{SETUP_ICON_FILE}}
 WizardStyle=modern
@@ -21,6 +21,9 @@ ArchitecturesInstallIn64BitMode={{ARCH}}
 [Code]
 const
   SYNCHRONIZE = $00100000;
+
+var
+  ReplacingExistingInstall: Boolean;
 
 function OpenProcess(dwDesiredAccess: DWORD; bInheritHandle: BOOL; dwProcessId: DWORD): THandle;
   external 'OpenProcess@kernel32.dll stdcall';
@@ -124,15 +127,22 @@ end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-  WaitForUpdatingApp;
-  UnregisterHelperService;
-  KillProcesses;
+  ReplacingExistingInstall := IsAppUpdate
+    or FileExists(ExpandConstant('{app}\\{{EXECUTABLE_NAME}}'))
+    or FileExists(ExpandConstant('{app}\\FlClashCore.exe'))
+    or FileExists(ExpandConstant('{app}\\FlClashHelperService.exe'));
+  if ReplacingExistingInstall then
+  begin
+    WaitForUpdatingApp;
+    UnregisterHelperService;
+    KillProcesses;
+  end;
   Result := '';
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
-  if CurStep = ssPostInstall then
+  if (CurStep = ssPostInstall) and ReplacingExistingInstall then
   begin
     ClearStaleProxy;
   end;

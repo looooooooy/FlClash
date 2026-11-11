@@ -8,6 +8,7 @@ import 'package:fl_clash/accounts/service.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/form/form.dart';
+import 'package:fl_clash/models/profile.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -34,11 +35,13 @@ class _HeySocksAccountViewState extends ConsumerState<HeySocksAccountView> {
   bool _busy = false;
   int _operation = 0;
 
+  AccountService get _service => ref.read(accountSessionServiceProvider);
+
   @override
   void initState() {
     super.initState();
     ref.read(managedAccountProvider);
-    unawaited(accountService.initialize());
+    unawaited(_service.initialize());
   }
 
   Future<void> _run(
@@ -47,7 +50,7 @@ class _HeySocksAccountViewState extends ConsumerState<HeySocksAccountView> {
   }) async {
     if (_busy && !interrupt) return;
     final operation = ++_operation;
-    final generation = accountService.status.value.state.generation;
+    final generation = _service.status.value.state.generation;
     setState(() {
       _busy = true;
       _error = null;
@@ -63,9 +66,9 @@ class _HeySocksAccountViewState extends ConsumerState<HeySocksAccountView> {
       if (token != null &&
           mounted &&
           operation == _operation &&
-          generation == accountService.status.value.state.generation) {
+          generation == _service.status.value.state.generation) {
         try {
-          await accountService.validateCaptcha(token);
+          await _service.validateCaptcha(token);
           await action();
         } catch (error) {
           if (mounted && operation == _operation) {
@@ -83,24 +86,51 @@ class _HeySocksAccountViewState extends ConsumerState<HeySocksAccountView> {
   }
 
   Future<void> _login() async {
-    await showFormSheet<void>(
+    final service = _service;
+    final signedIn = await showFormSheet<bool>(
       context: context,
-      builder: (_) => const HeySocksLoginForm(),
+      builder: (_) => HeySocksLoginForm(service: service),
     );
-    if (accountService.status.value.state.authenticated && mounted) {
-      await _run(() => ref.read(managedAccountProvider).sync());
+    if (signedIn != true || !mounted) return;
+    final selected = ref.read(currentProfileIdProvider);
+    final manager = ref.read(managedAccountProvider);
+    await _run(() async {
+      await manager.sync();
+      if (!mounted ||
+          ref.read(isStartProvider) ||
+          ref.read(currentProfileIdProvider) != selected) {
+        return;
+      }
+      if (_profile(ref.read(profilesProvider)) case final profile?) {
+        ref.read(currentProfileIdProvider.notifier).value = profile.id;
+      }
+    });
+  }
+
+  Profile? _profile(List<Profile> profiles) => profiles
+      .where((profile) => profile.type == ProfileType.heysocks)
+      .firstOrNull;
+
+  void _choose(Profile profile) {
+    if (ref.read(currentProfileIdProvider) == profile.id) {
+      if (ref
+          .read(groupsProvider)
+          .every((group) => group.name != managedRoot)) {
+        unawaited(ref.read(setupActionProvider.notifier).fullSetup());
+      }
+    } else {
+      ref.read(currentProfileIdProvider.notifier).value = profile.id;
     }
+    ref.read(currentPageLabelProvider.notifier).value = PageLabel.proxies;
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   @override
   Widget build(BuildContext context) {
     final manager = ref.watch(managedAccountProvider);
-    final profile = ref
-        .watch(profilesProvider)
-        .where((p) => p.type == ProfileType.heysocks)
-        .firstOrNull;
+    final profile = _profile(ref.watch(profilesProvider));
     return ValueListenableBuilder<AccountStatus>(
-      valueListenable: accountService.status,
+      valueListenable: _service.status,
       builder: (context, account, _) =>
           ValueListenableBuilder<ManagedSyncStatus>(
             valueListenable: manager.status,
@@ -113,15 +143,9 @@ class _HeySocksAccountViewState extends ConsumerState<HeySocksAccountView> {
               selectionRequired: profile?.managed?.selectionRequired ?? false,
               onLogin: _login,
               onRefresh: () => _run(() => manager.sync()),
-              onLogout: () => _run(accountService.logout, interrupt: true),
+              onLogout: () => _run(_service.logout, interrupt: true),
               onChoose: () {
-                if (profile != null) {
-                  ref.read(currentProfileIdProvider.notifier).value =
-                      profile.id;
-                }
-                ref.read(currentPageLabelProvider.notifier).value =
-                    PageLabel.proxies;
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                if (profile != null) _choose(profile);
               },
             ),
           ),
@@ -388,7 +412,7 @@ class _HeySocksLoginFormState extends State<HeySocksLoginForm> {
         throw const AccountFailure('unauthenticated');
       }
       _pending = false;
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } catch (error) {
       if (mounted && flow == _flow) {
         setState(() => _failure = accountFailureKind(error));
@@ -421,7 +445,7 @@ class _HeySocksLoginFormState extends State<HeySocksLoginForm> {
         if (event.type == 'authorized') {
           _pending = false;
           _deviceId = null;
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(true);
           return;
         }
       }

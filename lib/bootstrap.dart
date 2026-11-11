@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fl_clash/accounts/runtime.dart';
 import 'package:fl_clash/common/boot_guard.dart';
 import 'package:fl_clash/common/boot_record.dart';
 import 'package:fl_clash/common/common.dart';
@@ -149,6 +148,15 @@ class Bootstrap {
   ProviderContainer get _container => globalState.container;
 
   Future<void> _initApp() async {
+    final silent = _container.read(appSettingProvider).silentLaunch;
+    if (silent) {
+      unawaited(window?.hide());
+    } else {
+      unawaited(window?.show());
+    }
+    if (system.isWindows && !safeModeBuild) {
+      protocol.registerWindowsInBackground();
+    }
     unawaited(_container.read(systemActionProvider.notifier).updateTray());
     unawaited(
       _container.read(profilesActionProvider.notifier).autoUpdateProfiles(),
@@ -158,24 +166,18 @@ class Bootstrap {
     unawaited(
       autoLaunch?.updateStatus(_container.read(appSettingProvider).autoLaunch),
     );
-    if (!_container.read(appSettingProvider).silentLaunch) {
-      unawaited(window?.show());
-    } else {
-      unawaited(window?.hide());
-    }
     await _handleFailedPreference();
     if (!await _handlerDisclaimer()) {
       return;
     }
     await _showCrashRecoveryTip();
     await _container.read(coreActionProvider.notifier).startCore();
-    _container.read(managedAccountProvider);
-    unawaited(
-      accountService
-          .initialize()
-          .then((_) => _container.read(managedAccountProvider).refreshIfStale())
-          .catchError((Object _) {}),
-    );
+    if (_container
+        .read(profilesProvider)
+        .any((profile) => profile.type == ProfileType.heysocks)) {
+      final account = _container.read(managedAccountProvider);
+      unawaited(account.refreshIfStale().catchError((Object _) {}));
+    }
     if (!_bootDecision.isDegraded) {
       await _container.read(setupActionProvider.notifier).initStatus();
     }

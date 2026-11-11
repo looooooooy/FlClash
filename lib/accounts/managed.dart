@@ -73,6 +73,7 @@ class ManagedAccount {
   Map<String, AccountNode> _nodes = {};
   Map<String, List<String>> _groups = {};
   Future<void>? _sync;
+  Future<void>? _firstPublication;
   Future<void> _publications = Future.value();
   Future<void> _work = Future.value();
   int _generation = 0;
@@ -130,6 +131,7 @@ class ManagedAccount {
   Future<void> clear() {
     _generation++;
     _sync = null;
+    _firstPublication = null;
     _configs = {};
     _groups = {};
     _nodes = {};
@@ -195,7 +197,10 @@ class ManagedAccount {
           } while (_fullRequested);
         }).whenComplete(() {
           _runningFull = false;
-          if (identical(_sync, operation)) _sync = null;
+          if (identical(_sync, operation)) {
+            _sync = null;
+            _firstPublication = null;
+          }
         });
     return _sync = operation;
   }
@@ -220,6 +225,7 @@ class ManagedAccount {
       final targets = nodes.values
           .where((node) => full || !configs.containsKey(node.stableId))
           .toList();
+      final firstSync = repository.profile == null;
       var cursor = 0;
       var completed = 0;
       var ready = 0;
@@ -261,6 +267,20 @@ class ManagedAccount {
             unsupported: unsupported,
             failed: failed,
           );
+          if (firstSync &&
+              configs.isNotEmpty &&
+              completed < targets.length &&
+              _firstPublication == null) {
+            _nodes = nodes;
+            final publication = _publish(
+              Map.of(configs),
+              Map.of(checked),
+              generation,
+              catalogAt: now(),
+            );
+            _firstPublication = publication;
+            await publication;
+          }
           if (cursor < targets.length) {
             await delay(const Duration(milliseconds: 180));
           }
@@ -359,6 +379,20 @@ class ManagedAccount {
       throw const AccountFailure('unauthenticated');
     }
     final generation = _generation;
+    // The first sync can keep checking the rest of the catalog after a
+    // validated config is visible. Fresh lines need no work on that queue.
+    if (_firstPublication case final publication?) {
+      await publication;
+      if (await _ensureTarget(
+        generation,
+        group: group,
+        target: target,
+        globalMode: globalMode,
+        freshOnly: true,
+      )) {
+        return;
+      }
+    }
     await _restoreCache(generation);
     if (_configs.isEmpty) {
       await sync();
@@ -367,21 +401,22 @@ class ManagedAccount {
     }
     _check(generation);
     if (_sync != null) await _sync;
-    await _runWork(
-      () => _ensureTarget(
+    await _runWork(() async {
+      await _ensureTarget(
         generation,
         group: group,
         target: target,
         globalMode: globalMode,
-      ),
-    );
+      );
+    });
   }
 
-  Future<void> _ensureTarget(
+  Future<bool> _ensureTarget(
     int generation, {
     String? group,
     String? target,
     bool? globalMode,
+    bool freshOnly = false,
   }) async {
     _check(generation);
     final profile = repository.profile;
@@ -403,7 +438,7 @@ class ManagedAccount {
       if (next == null || next == 'REJECT') {
         // A removed line can be recovered by choosing its country, then line.
         if (target == current && info.countryNames.containsValue(target)) {
-          return;
+          return true;
         }
         throw const AccountFailure('selection_required');
       }
@@ -413,7 +448,7 @@ class ManagedAccount {
       current = next;
     }
     if (current == 'DIRECT' && (group == 'GLOBAL' || useGlobal)) {
-      return;
+      return true;
     }
     final entry = info.lineNames.entries
         .where(
@@ -426,6 +461,7 @@ class ManagedAccount {
       throw const AccountFailure('selection_required');
     }
     if (_stale(info.checkedAt[entry.key], managedTargetAge)) {
+      if (freshOnly) return false;
       final node = _nodes[entry.key]!;
       late final AccountNodeConfig config;
       try {
@@ -486,15 +522,15 @@ class ManagedAccount {
         fullAt: info.fullRefreshAt,
       );
       // A fresh config can remove an individual connection within a line.
-      await _ensureTarget(
+      return _ensureTarget(
         generation,
         group: group,
         target: target,
         globalMode: globalMode,
       );
-      return;
     }
     _check(generation);
+    return true;
   }
 
   Future<void> _publish(

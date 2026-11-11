@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/core/method.dart';
 
+import 'device_name.dart';
 import 'models.dart';
 
 abstract interface class AccountGateway {
@@ -33,12 +34,17 @@ abstract interface class AccountGateway {
 class CoreAccountGateway implements AccountGateway {
   final CoreHandlerInterface core;
   final String platform;
+  final Future<String> Function() _deviceName;
   int _lease = 0;
   int _intent = 0;
   int _sequence = 0;
   final Set<String> _pending = {};
-  CoreAccountGateway(this.core, {String? platform})
-    : platform = platform ?? Platform.operatingSystem;
+  CoreAccountGateway(
+    this.core, {
+    String? platform,
+    Future<String> Function()? deviceName,
+  }) : platform = platform ?? Platform.operatingSystem,
+       _deviceName = deviceName ?? accountDeviceName;
 
   Future<Object?> _request(
     CoreMethod method, [
@@ -101,7 +107,10 @@ class CoreAccountGateway implements AccountGateway {
       await _request(CoreMethod.accountInitialize, {
         'platform': platform,
         'deviceId': deviceId,
-        'deviceName': 'FlClash HeySocks',
+        'deviceName': normalizedAccountDeviceName(
+          await _deviceName(),
+          platform,
+        ),
         'language': 'en',
       }),
     );

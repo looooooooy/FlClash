@@ -181,6 +181,9 @@ remain excluded from backups after deletion. Restored managed metadata cannot ad
 
 `ManagedAccount` serializes catalog and target refreshes and fences publication on account replacement or logout.
 Catalog checks use 30 minutes, target checks use 5 minutes, and full refreshes use 12 hours while Flutter can run.
+The first sync publishes the first usable lines before the rest of the catalog finishes. Only freshly checked
+routes in that published config can bypass the ongoing sync; a stale route still uses the normal refresh path.
+On Windows and Linux the account registry and application preferences share the same atomic writer.
 Publications request `SetupAction.applyProfileDebounce`; start, profile application and proxy selection use the existing
 actions. Removed selections become rejection targets and require explicit selection. Authentication or managed config
 failure stops the existing run rather than applying the default direct config. Native background starts carrying

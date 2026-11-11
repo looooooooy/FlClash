@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:fl_clash/common/preferences_store.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 import 'models.dart';
 
@@ -26,6 +28,62 @@ abstract interface class AccountSecretStorage {
   Future<String?> read();
   Future<void> write(String value);
   Future<void> delete();
+}
+
+abstract interface class AccountMetadata {
+  Future<String?> getString(String key);
+  Future<void> setString(String key, String value);
+  Future<List<String>?> getStringList(String key);
+  Future<void> setStringList(String key, List<String> value);
+}
+
+class _PlatformAccountMetadata implements AccountMetadata {
+  final _preferences = SharedPreferencesAsync();
+
+  @override
+  Future<String?> getString(String key) => _preferences.getString(key);
+  @override
+  Future<void> setString(String key, String value) =>
+      _preferences.setString(key, value);
+  @override
+  Future<List<String>?> getStringList(String key) =>
+      _preferences.getStringList(key);
+  @override
+  Future<void> setStringList(String key, List<String> value) =>
+      _preferences.setStringList(key, value);
+}
+
+class DesktopAccountMetadata implements AccountMetadata {
+  const DesktopAccountMetadata(this.store);
+
+  final AtomicFilePreferencesStore store;
+
+  Future<void> _set(String type, String key, Object value) async {
+    if (!await store.setValue(type, key, value)) {
+      throw const AccountFailure('storage_failure');
+    }
+  }
+
+  @override
+  Future<String?> getString(String key) async =>
+      await store.readValue(key) as String?;
+  @override
+  Future<void> setString(String key, String value) =>
+      _set('String', key, value);
+  @override
+  Future<List<String>?> getStringList(String key) async =>
+      (await store.readValue(key) as List?)?.cast<String>();
+  @override
+  Future<void> setStringList(String key, List<String> value) =>
+      _set('StringList', key, value);
+}
+
+AccountMetadata _accountMetadata() {
+  final store = SharedPreferencesStorePlatform.instance;
+  // The desktop plugin's async API uses the same file as the legacy API.
+  return store is AtomicFilePreferencesStore
+      ? DesktopAccountMetadata(store)
+      : _PlatformAccountMetadata();
 }
 
 class PlatformAccountSecretStorage implements AccountSecretStorage {
@@ -58,14 +116,14 @@ class PlatformAccountSecretStorage implements AccountSecretStorage {
 class ProtectedAccountStore implements AccountSessionStore {
   final AccountSecretStorage? _configuredSecrets;
   AccountSecretStorage? _platformSecrets;
-  final SharedPreferencesAsync metadata;
+  final AccountMetadata metadata;
   Future<void> _metadataWrites = Future.value();
   Future<String>? _identity;
   ProtectedAccountStore({
     AccountSecretStorage? secrets,
-    SharedPreferencesAsync? metadata,
+    AccountMetadata? metadata,
   }) : _configuredSecrets = secrets,
-       metadata = metadata ?? SharedPreferencesAsync();
+       metadata = metadata ?? _accountMetadata();
 
   Future<AccountSecretStorage> _secretStorage() async =>
       _configuredSecrets ??

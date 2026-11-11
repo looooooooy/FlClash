@@ -30,6 +30,7 @@ class CatalogGateway extends FakeGateway {
   int maxActive = 0;
   int configCalls = 0;
   Completer<void>? configGate;
+  final configGates = <String, Completer<void>>{};
   @override
   Future<AccountCatalog> catalog(String isp) async {
     catalogCalls++;
@@ -47,6 +48,7 @@ class CatalogGateway extends FakeGateway {
     if (active > maxActive) maxActive = active;
     try {
       await configGate?.future;
+      await configGates[node.stableId]?.future;
       await Future<void>.delayed(Duration.zero);
       if (configFailures[node.stableId] case final failure?) throw failure;
       if (failures.contains(node.stableId)) {
@@ -123,6 +125,7 @@ class MemoryRepository implements ManagedProfileRepository {
   int stops = 0;
   Completer<void>? publishing;
   Completer<void>? entered;
+  final firstPublished = Completer<void>();
   AccountFailure? publicationFailure;
   @override
   AccountConfigOptions get options => const AccountConfigOptions();
@@ -147,6 +150,7 @@ class MemoryRepository implements ManagedProfileRepository {
       managed: value.info,
       selectedMap: value.selections,
     );
+    if (!firstPublished.isCompleted) firstPublished.complete();
   }
 
   @override
@@ -196,6 +200,29 @@ void main() {
     expect(repository.profile!.selectedMap['GLOBAL'], managedRoot);
     expect(manager.status.value.ready, 3);
   });
+  test(
+    'first verified line is usable while other lines are still syncing',
+    () async {
+      final slow = Completer<void>();
+      gateway.configGates.addAll({'b': slow, 'c': slow});
+      final sync = manager.sync();
+      try {
+        await repository.firstPublished.future.timeout(
+          const Duration(seconds: 3),
+        );
+        expect(repository.profile!.managed!.lineNames.keys, ['a']);
+        expect(manager.status.value.syncing, isTrue);
+        await manager
+            .ensureUsable(group: managedRoot, target: 'A')
+            .timeout(const Duration(seconds: 3));
+      } finally {
+        slow.complete();
+        await sync;
+      }
+      expect(repository.profile!.managed!.lineNames.keys, ['a', 'b', 'c']);
+      expect(repository.profile!.selectedMap[managedRoot], 'A');
+    },
+  );
   test('partial success excludes unsupported and failed lines', () async {
     gateway.unsupported = {'b'};
     gateway.failures = {'c'};

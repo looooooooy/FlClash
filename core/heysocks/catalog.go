@@ -39,6 +39,7 @@ type Node struct {
 	CatalogNode
 	CategoryName string `json:"categoryName"`
 	CountryName  string `json:"countryName"`
+	Ordinal      int    `json:"ordinal,omitempty"`
 }
 
 func (CatalogNode) String() string     { return "heysocks.CatalogNode{redacted}" }
@@ -115,6 +116,13 @@ func FlattenCatalog(categories []Category) []Node {
 			}
 		}
 	}
+	// A partial profile uses the same route names as the complete catalog.
+	sort.Slice(nodes, func(i, j int) bool {
+		return profileNodeLess(nodes[i], nodes[j])
+	})
+	for i := range nodes {
+		nodes[i].Ordinal = i + 1
+	}
 	sort.Slice(nodes, func(i, j int) bool {
 		a, b := nodes[i], nodes[j]
 		if a.CountryCode != b.CountryCode {
@@ -160,6 +168,13 @@ type Profile struct {
 func (Profile) String() string     { return "heysocks.Profile{redacted}" }
 func (p Profile) GoString() string { return p.String() }
 
+func profileNodeLess(a, b Node) bool {
+	if a.CountryCode != b.CountryCode {
+		return a.CountryCode < b.CountryCode
+	}
+	return a.StableID < b.StableID
+}
+
 func BuildProfile(configs []NodeConfig) (Profile, error) {
 	ordered := append([]NodeConfig(nil), configs...)
 	identities := map[string]string{}
@@ -173,11 +188,7 @@ func BuildProfile(configs []NodeConfig) (Profile, error) {
 		identities[config.Node.StableID] = fingerprint
 	}
 	sort.Slice(ordered, func(i, j int) bool {
-		a, b := ordered[i].Node, ordered[j].Node
-		if a.CountryCode != b.CountryCode {
-			return a.CountryCode < b.CountryCode
-		}
-		return a.StableID < b.StableID
+		return profileNodeLess(ordered[i].Node, ordered[j].Node)
 	})
 	profile := Profile{Proxies: []Connection{}}
 	used := map[string]bool{"HeySocks": true, "DIRECT": true, "REJECT": true, "GLOBAL": true}
@@ -226,7 +237,11 @@ func BuildProfile(configs []NodeConfig) (Profile, error) {
 		if nodeName == "" {
 			nodeName = "Node"
 		}
-		lineName := allocate(fmt.Sprintf("%02d · %s", lineIndex, nodeName), n.StableID[:min(8, len(n.StableID))])
+		ordinal := n.Ordinal
+		if ordinal < 1 {
+			ordinal = lineIndex
+		}
+		lineName := allocate(fmt.Sprintf("%02d · %s", ordinal, nodeName), n.StableID[:min(8, len(n.StableID))])
 		names := make([]string, 0, len(config.Connections))
 		for i, conn := range config.Connections {
 			if err := conn.validate(); err != nil {

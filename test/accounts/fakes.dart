@@ -4,7 +4,6 @@ import 'package:fl_clash/accounts/models.dart';
 import 'package:fl_clash/accounts/rpc.dart';
 import 'package:fl_clash/accounts/store.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 AccountSnapshot testSnapshot(
   int revision,
@@ -135,7 +134,7 @@ class FakeStore implements AccountSessionStore {
   }
 }
 
-class FakeMetadata extends Fake implements SharedPreferencesAsync {
+class FakeMetadata extends Fake implements AccountMetadata {
   final Map<String, Object> values = {};
   final bool fail;
   FakeMetadata({this.fail = false});

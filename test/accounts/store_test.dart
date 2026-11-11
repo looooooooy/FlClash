@@ -1,11 +1,55 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:fl_clash/accounts/models.dart';
 import 'package:fl_clash/accounts/store.dart';
 import 'package:fl_clash/common/backup.dart';
+import 'package:fl_clash/common/preferences_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fakes.dart';
 
 void main() {
+  test(
+    'desktop settings saves preserve HeySocks metadata and session',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('account-metadata');
+      addTearDown(() => dir.delete(recursive: true));
+      final file = File('${dir.path}/shared_preferences.json');
+      await file.writeAsString(
+        jsonEncode({
+          'flutter.config': 'original',
+          'heysocks.private_profiles.v1': ['7'],
+        }),
+      );
+      final path = Future.value(file.path);
+      final settings = AtomicFilePreferencesStore(path);
+      expect(await settings.getAll(), {'flutter.config': 'original'});
+      final secrets = FakeSecrets();
+      final store = ProtectedAccountStore(
+        secrets: secrets,
+        metadata: DesktopAccountMetadata(settings),
+      );
+      final identity = await store.installIdentity();
+      final epoch = await store.beginSession();
+      await Future.wait([
+        store.registerPrivateProfile(9),
+        settings.setValue('String', 'flutter.config', 'updated'),
+      ]);
+      await store.writeSession(testSnapshot(2, 1), epoch);
+
+      final reopened = AtomicFilePreferencesStore(path);
+      final next = ProtectedAccountStore(
+        secrets: secrets,
+        metadata: DesktopAccountMetadata(reopened),
+      );
+      expect(await reopened.getAll(), {'flutter.config': 'updated'});
+      expect(await next.installIdentity(), identity);
+      expect(await next.privateProfileIds(), {7, 9});
+      expect((await next.readSession())?.epoch, epoch);
+    },
+  );
+
   test(
     'protected store round trips complete session and keeps metadata separate',
     () async {

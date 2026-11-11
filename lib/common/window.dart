@@ -34,15 +34,8 @@ class Window implements WindowPort {
   }
 
   Future<void> init(int version, WindowProps props) async {
-    if (!safeModeBuild) {
-      if (system.isWindows) {
-        for (final scheme in protocolSchemes) {
-          protocol.register(scheme);
-        }
-      }
-      if (system.isLinux) {
-        unawaited(protocol.registerLinux(protocolSchemes));
-      }
+    if (!safeModeBuild && system.isLinux) {
+      unawaited(protocol.registerLinux(protocolSchemes));
     }
     await desktopWindow.ensureInitialized();
     _supportsPosition = !system.isMacOS;

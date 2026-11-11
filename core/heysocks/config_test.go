@@ -149,6 +149,15 @@ func TestCatalogIdentityNoFixedLimitsAndDeterministicGroups(t *testing.T) {
 	if err != nil || !reflect.DeepEqual(a, b) || len(a.Proxies) != 151 {
 		t.Fatal("grouping is not deterministic or is capped")
 	}
+	for _, config := range configs {
+		if config.Node.Ordinal > 1 {
+			partial, err := BuildProfile([]NodeConfig{config})
+			if err != nil || partial.Proxies[0].Name != a.Proxies[config.Node.Ordinal-1].Name {
+				t.Fatal("partial publication renamed a route")
+			}
+			break
+		}
+	}
 	seen := map[string]bool{}
 	for _, group := range a.Groups {
 		if seen[group.Name] {

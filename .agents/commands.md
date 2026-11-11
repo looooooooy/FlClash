@@ -130,7 +130,8 @@ dart run tool/generate_status_icons.dart
 
 It writes the tray PNGs with Flutter `2.0x/`–`4.0x/` resolution variants to `assets/images/tray/unix/`,
 multi-size tray `.ico` files to `assets/images/tray/windows/`, and `windows/runner/resources/app_icon.ico`
-from `assets/images/icon.png`. `status_1`–`status_3` are the logo glyph alone and tell stopped, running and TUN
+from `assets/images/icon.png`. The Windows tray uses `yundu_tray.svg` for `status_1`–`status_3`.
+`status_1`–`status_3` are the logo glyph alone and tell stopped, running and TUN
 apart only by color, so they carry no rings or shadow. macOS draws its menu bar icon as a template by default,
 where color is lost: `status_1` renders the bare logo from `assets_source/images/icon/glyph.svg` and `status_4`
 reuses `status_4.svg`, both recolored to black into `assets/images/tray/macos/`; the sources keep their colors.

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:fl_clash/accounts/device_name.dart';
 import 'package:fl_clash/accounts/models.dart';
 import 'package:fl_clash/accounts/rpc.dart';
 import 'package:fl_clash/core/desktop/model.dart';
@@ -55,12 +58,20 @@ void main() {
             'state': {'revision': 0, 'generation': 0, 'authenticated': false},
           },
         };
-      final gateway = CoreAccountGateway(core, platform: 'android');
+      final gateway = CoreAccountGateway(
+        core,
+        platform: 'android',
+        deviceName: () async => '我的 vivo X200 Ultra',
+      );
       await gateway.initialize('synthetic-install');
       expect(core.calls.single.method, CoreMethod.accountInitialize);
       expect(
         (core.calls.single.arguments as Map)['deviceId'],
         'synthetic-install',
+      );
+      expect(
+        (core.calls.single.arguments as Map)['deviceName'],
+        '我的 vivo X200 Ultra',
       );
       core.result = {
         'value': {
@@ -74,6 +85,12 @@ void main() {
       expect(event.toString(), isNot(contains('synthetic-code')));
     },
   );
+  test('device name stays within the Core limit without splitting Unicode', () {
+    final name = normalizedAccountDeviceName('云' * 100, 'windows');
+    expect(name, '云' * 85);
+    expect(utf8.encode(name).length, lessThanOrEqualTo(256));
+    expect(normalizedAccountDeviceName('  \n', 'windows'), 'windows');
+  });
   test(
     'Android account RPC works before Core start or VPN permission',
     () async {

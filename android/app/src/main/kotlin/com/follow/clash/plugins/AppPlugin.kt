@@ -184,6 +184,20 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
+            "deviceName" -> reply(result) {
+                val name = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                    runCatching {
+                        Settings.Global.getString(
+                            GlobalState.application.contentResolver,
+                            Settings.Global.DEVICE_NAME,
+                        )
+                    }.getOrNull()
+                } else {
+                    null
+                }
+                name?.takeIf { it.isNotBlank() } ?: Build.MODEL
+            }
+
             "moveTaskToBack" -> {
                 activity?.moveTaskToBack(true)
                 result.success(true)
