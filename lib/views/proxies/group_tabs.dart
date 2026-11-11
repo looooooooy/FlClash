@@ -16,10 +16,16 @@ const _tabPadding = 16.0;
 /// built: each chip's width comes from its label, so the strip can scroll to
 /// one it has not built.
 class GroupTabs extends StatefulWidget {
-  const GroupTabs({super.key, required this.controller, required this.groups});
+  const GroupTabs({
+    super.key,
+    required this.controller,
+    required this.groups,
+    this.labels = const {},
+  });
 
   final TabController controller;
   final List<Group> groups;
+  final Map<String, String> labels;
 
   @override
   State<GroupTabs> createState() => _GroupTabsState();
@@ -150,7 +156,7 @@ class _GroupTabsState extends State<GroupTabs> {
             items: [
               for (final (index, group) in widget.groups.indexed)
                 PopupMenuItem(
-                  label: group.name,
+                  label: widget.labels[group.name] ?? group.name,
                   checked: index == widget.controller.index,
                   onPressed: () => _select(index),
                 ),
@@ -180,7 +186,7 @@ class _GroupTabsState extends State<GroupTabs> {
             end: index < last ? _tabSpacing : 0,
           ),
           child: _GroupTab(
-            name: groups[index].name,
+            name: widget.labels[groups[index].name] ?? groups[index].name,
             index: index,
             selected: _selected,
             onPressed: () => _select(index),
@@ -194,7 +200,12 @@ class _GroupTabsState extends State<GroupTabs> {
 
   @override
   Widget build(BuildContext context) {
-    final extents = _extents = _TabExtents.of(context, widget.groups, _extents);
+    final extents = _extents = _TabExtents.of(
+      context,
+      widget.groups,
+      widget.labels,
+      _extents,
+    );
     return SizedBox(
       height: TonalButtonSize.section.button,
       child: ValueListenableBuilder(
@@ -260,6 +271,7 @@ class _TabExtents {
   static _TabExtents of(
     BuildContext context,
     List<Group> groups,
+    Map<String, String> labels,
     _TabExtents? previous,
   ) {
     final style = AppTextStyle.subheadline.of(context, emphasized: true);
@@ -268,7 +280,9 @@ class _TabExtents {
       context,
       const EdgeInsets.symmetric(horizontal: _tabPadding),
     ).horizontal;
-    final names = [for (final group in groups) group.name];
+    final names = [
+      for (final group in groups) labels[group.name] ?? group.name,
+    ];
     final key = (
       _NamesKey(names),
       style,

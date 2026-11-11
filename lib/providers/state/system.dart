@@ -215,6 +215,9 @@ SharedState sharedState(Ref ref) {
   final selectedMap = currentProfile.selectedMap;
   final onlyStatisticsProxy = appSetting.onlyStatisticsProxy;
   return SharedState(
+    requiresAccountRefresh:
+        ref.watch(currentProfileProvider)?.type == ProfileType.heysocks,
+    accountRefreshTip: currentAppLocalizations.heysocksOpenApp,
     currentProfileName: currentProfileName,
     onlyStatisticsProxy: onlyStatisticsProxy,
     showStopAction: appSetting.showStopAction,

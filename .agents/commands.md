@@ -360,9 +360,12 @@ for `:common`, `:service` and `:app`, with the Flutter compile tasks excluded
 and the gomobile AAR built for one ABI), `rust` (both crates), and a
 Windows runner for the helper's `windows-service` feature. On branch pushes a
 `desktop` job also compiles a debug build per desktop platform; a tag skips it,
-since its release matrix compiles the same native code. Release builds run only
-in the public repository and start alongside the checks; `upload` publishes
-only once every build and every check job passes.
+since its release matrix compiles the same native code. On branch pushes and
+manual runs, the `package` matrix uploads an Android ARM64 APK, a macOS Apple
+Silicon DMG, and a Windows x64 installer. Each 云渡 file can be downloaded
+directly from Actions for 14 days. The APK uses the release signing secrets when all four
+are configured and the Gradle debug key otherwise. The upstream tag release
+matrix and its `upload` job publish only after its builds and checks pass.
 
 `bash tool/check_plugins.sh` is that plugin gate, and CI runs the same script.
 It discovers every `plugins/*/pubspec.yaml`, analyzes each package, and runs

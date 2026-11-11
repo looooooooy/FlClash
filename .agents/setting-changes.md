@@ -172,3 +172,29 @@ Tests that hold these rules:
 - `test/manager/core_manager_test.dart` (update against apply).
 - `test/manager/vpn_manager_test.dart` (the restart notice).
 - `test/providers/setup_action_test.dart` (running options, suspension, `restartVpn`, the apply debounce).
+
+## Managed account profiles
+
+HeySocks is an explicit managed source. Its generated YAML and private cache are published together through
+`publishManagedFiles`; register the reserved ID in `privateAccountStore` before exposing its database row. Registry IDs
+remain excluded from backups after deletion. Restored managed metadata cannot adopt archive YAML and requires login.
+
+`ManagedAccount` serializes catalog and target refreshes and fences publication on account replacement or logout.
+Catalog checks use 30 minutes, target checks use 5 minutes, and full refreshes use 12 hours while Flutter can run.
+Publications request `SetupAction.applyProfileDebounce`; start, profile application and proxy selection use the existing
+actions. Removed selections become rejection targets and require explicit selection. Authentication or managed config
+failure stops the existing run rather than applying the default direct config. Native background starts carrying
+`SharedState.requiresAccountRefresh` request that the user open the app; they never claim to refresh an account.
+Target freshness and rejection checks follow the effective selector for the current mode. GLOBAL may point directly to
+a country, line or underlying connection; those choices resolve to their owning stable node, independently of the
+HeySocks root selection. Valid direct GLOBAL choices survive publication, and removed choices require explicit selection.
+Running mode changes preflight the destination selector and finish the existing setup/apply path before updating the
+active mode. Newer mode/stop intents cancel a pending switch. Only explicit transient transport/network/timeout/busy
+failures and HTTP 408/429/5xx permit cached targets; malformed/integrity/permanent rejection failures remove them.
+Account cleanup fences setup by account generation, profile and epoch, then drains `_setupScheduler` before its final
+stop and runtime-file cleanup. The last submitted managed profile owns that cleanup even after the selected profile changes.
+
+Account pages use the normal profile navigation and grouped forms. Android verification uses a private WebView wrapper
+whose message handler checks both the current iframe and its exact HTTPS origin; no JavaScript interface is exposed.
+Passwords, device codes, challenge URLs and decoded connection payloads must stay out of logs, Profile metadata and
+custom proxy rows. The original file, URL and custom profile flows retain their existing ownership.

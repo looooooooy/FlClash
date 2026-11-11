@@ -31,6 +31,14 @@ void main() {
     expect(find.byType(Banner), findsNothing);
   });
 
+  testWidgets('a pre build carries no preview banner', (tester) async {
+    globalState.appEnv = 'pre';
+    await pump(tester, safeMode: false);
+
+    expect(find.byKey(const Key('child')), findsOneWidget);
+    expect(find.byType(Banner), findsNothing);
+  });
+
   testWidgets('a safe mode build is bannered on any channel', (tester) async {
     await pump(tester, safeMode: true);
 

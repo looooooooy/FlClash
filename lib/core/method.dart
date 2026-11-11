@@ -4,6 +4,25 @@ import 'package:fl_clash/enum/enum.dart';
 
 /// A Core method by its wire name, `area.verb` as `core/protocol.go` names it.
 enum CoreMethod {
+  accountSuspend('account.suspend'),
+  accountInitialize('account.initialize'),
+  accountDiscover('account.discover'),
+  accountLogin('account.login'),
+  accountCaptcha('account.captcha'),
+  accountValidateCaptcha('account.validateCaptcha'),
+  accountRestore('account.restore'),
+  accountRefresh('account.refresh'),
+  accountState('account.state'),
+  accountSnapshot('account.snapshot'),
+  accountWatch('account.watch'),
+  accountDeviceStart('account.deviceStart'),
+  accountDevicePoll('account.devicePoll'),
+  accountDeviceCancel('account.deviceCancel'),
+  accountCatalog('account.catalog'),
+  accountConfig('account.config'),
+  accountBuildProfile('account.buildProfile'),
+  accountLogout('account.logout'),
+  accountCancel('account.cancel'),
   coreInit('core.init'),
   coreInitialized('core.initialized'),
   coreGc('core.gc'),
@@ -67,6 +86,8 @@ enum CoreMethod {
   final String wireName;
 
   const CoreMethod(this.wireName);
+
+  bool get isPrivateAccount => wireName.startsWith('account.');
 
   static final _byWireName = {
     for (final method in values) method.wireName: method,

@@ -55,6 +55,9 @@ func handleCrash() {
 }
 
 func handleMethodCall(call *MethodCall) (data []byte) {
+	if isAccountMethod(call.Method) {
+		return privateAccountResponse(call)
+	}
 	defer func() {
 		if r := recover(); r != nil {
 			logError("panic in %s: %v\n%s", call.Method, r, stackTrace())
@@ -182,6 +185,26 @@ func action(run func()) methodHandler {
 }
 
 var methodHandlers = map[CoreMethod]methodHandler{
+	accountSuspendMethod:         accounts.handle,
+	accountInitializeMethod:      accounts.handle,
+	accountDiscoverMethod:        accounts.handle,
+	accountLoginMethod:           accounts.handle,
+	accountCaptchaMethod:         accounts.handle,
+	accountValidateCaptchaMethod: accounts.handle,
+	accountRestoreMethod:         accounts.handle,
+	accountRefreshMethod:         accounts.handle,
+	accountStateMethod:           accounts.handle,
+	accountSnapshotMethod:        accounts.handle,
+	accountWatchMethod:           accounts.handle,
+	accountDeviceStartMethod:     accounts.handle,
+	accountDevicePollMethod:      accounts.handle,
+	accountDeviceCancelMethod:    accounts.handle,
+	accountCatalogMethod:         accounts.handle,
+	accountConfigMethod:          accounts.handle,
+	accountBuildProfileMethod:    accounts.handle,
+	accountLogoutMethod:          accounts.handle,
+	accountCancelMethod:          accounts.handle,
+
 	coreInitMethod:        command(handleInit),
 	coreInitializedMethod: withoutArguments(handleInitialized),
 	coreGCMethod:          action(handleForceGC),

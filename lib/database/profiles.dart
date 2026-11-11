@@ -9,6 +9,9 @@ class Profiles extends Table {
 
   TextColumn get type => textEnum<ProfileType>()();
 
+  TextColumn get managed =>
+      text().map(const ManagedProfileInfoConverter()).nullable()();
+
   TextColumn get label => text()();
 
   TextColumn get currentGroupName => text().nullable()();
@@ -43,6 +46,25 @@ class Profiles extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+}
+
+class ManagedProfileInfoConverter
+    extends TypeConverter<ManagedProfileInfo?, String?> {
+  const ManagedProfileInfoConverter();
+
+  @override
+  ManagedProfileInfo? fromSql(String? value) {
+    if (value == null) return null;
+    try {
+      return ManagedProfileInfo.fromJson(json.decode(value));
+    } catch (_) {
+      return const ManagedProfileInfo();
+    }
+  }
+
+  @override
+  String? toSql(ManagedProfileInfo? value) =>
+      value == null ? null : json.encode(value.toJson());
 }
 
 class ProfileOverridesConverter
@@ -166,6 +188,7 @@ extension RawProfilExt on RawProfile {
       id: id,
       type: type,
       label: label,
+      managed: managed,
       currentGroupName: currentGroupName,
       url: url,
       ageSecretKey: ageSecretKey ?? '',
@@ -190,6 +213,7 @@ extension ProfilesCompanionExt on Profile {
       id: Value(id),
       type: type,
       label: label,
+      managed: Value(managed),
       currentGroupName: Value(currentGroupName),
       url: url,
       ageSecretKey: Value(ageSecretKey.isEmpty ? null : ageSecretKey),

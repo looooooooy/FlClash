@@ -80,6 +80,9 @@ class BackupAction extends _$BackupAction {
       homeDirPath: await appPath.homeDirPath,
       entries: BackupEntries.of(
         profileIds: profileIds,
+        privateProfileIds: await ref
+            .read(privateAccountStoreProvider)
+            .privateProfileIds(),
         scriptIds: scriptIds,
         providers: providers,
         mitmModules: mitmModules,
@@ -94,6 +97,38 @@ class BackupAction extends _$BackupAction {
     RestoreOption option, {
     String? stagingDirPath,
   }) async {
+    final privateIds = await ref
+        .read(privateAccountStoreProvider)
+        .privateProfileIds();
+    final managed = data.profiles
+        .where(
+          (item) =>
+              item.type == ProfileType.heysocks || privateIds.contains(item.id),
+        )
+        .toList();
+    if (managed.isNotEmpty) {
+      ref.read(managedAccountProvider);
+      await ref.read(accountSessionServiceProvider).logout();
+      for (final profile in managed) {
+        await ref
+            .read(privateAccountStoreProvider)
+            .registerPrivateProfile(profile.id);
+      }
+    }
+    final restoredProfiles = data.profiles
+        .map(
+          (profile) => managed.any((item) => item.id == profile.id)
+              ? profile.copyWith(
+                  type: ProfileType.heysocks,
+                  url: '',
+                  ageSecretKey: '',
+                  managed: const ManagedProfileInfo(),
+                  lastUpdateDate: null,
+                  selectedMap: const {},
+                )
+              : profile,
+        )
+        .toList();
     final configMap = data.configMap;
     final config = option == RestoreOption.onlyProfiles || configMap == null
         ? null
@@ -107,7 +142,7 @@ class BackupAction extends _$BackupAction {
         : await _copyStagedFiles(data, stagingDirPath);
     try {
       await database.restore(
-        data.profiles,
+        restoredProfiles,
         data.scripts,
         data.rules,
         data.disabledRules,
@@ -175,7 +210,12 @@ class BackupAction extends _$BackupAction {
     }
 
     try {
+      final privateIds = await ref
+          .read(privateAccountStoreProvider)
+          .privateProfileIds();
+      final privateEntries = privateIds.map(BackupEntries.profile).toSet();
       for (final entry in BackupEntries.ofData(data)) {
+        if (privateEntries.contains(entry)) continue;
         final staged = File(BackupEntries.resolve(stagingDirPath, entry));
         if (!await staged.exists()) {
           continue;

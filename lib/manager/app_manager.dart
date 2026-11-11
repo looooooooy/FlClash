@@ -123,6 +123,9 @@ class AppEnvManager extends ConsumerWidget {
     if (safeMode) {
       return 'SAFE MODE';
     }
+    if (globalState.appEnv == 'pre') {
+      return null;
+    }
     if (!globalState.isPre) {
       return null;
     }

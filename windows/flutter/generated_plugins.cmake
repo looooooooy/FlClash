@@ -7,10 +7,12 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   dynamic_color
   file_selector_windows
+  flutter_secure_storage_windows
   proxy
   screen_retriever_windows
   tray
   url_launcher_windows
+  webview_flutter_windows
   wifi_ssid
   window
 )

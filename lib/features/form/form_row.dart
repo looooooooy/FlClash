@@ -67,6 +67,7 @@ class FormRow extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final bool invalid;
+  final bool stacked;
   final VoidCallback? onPressed;
 
   const FormRow({
@@ -76,6 +77,7 @@ class FormRow extends StatelessWidget {
     this.leading,
     this.trailing,
     this.invalid = false,
+    this.stacked = false,
     this.onPressed,
   });
 
@@ -101,10 +103,28 @@ class FormRow extends StatelessWidget {
     return DecorationListItem(
       invalid: invalid,
       onPressed: onPressed,
-      minVerticalPadding: trailing == null ? null : 0,
+      minVerticalPadding: stacked ? 12 : (trailing == null ? null : 0),
       leading: leading,
       title: LayoutBuilder(
         builder: (context, constraints) {
+          if (stacked) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 4,
+              children: [
+                Text(
+                  title,
+                  style:
+                      titleStyle ?? AppTextStyle.footnote.of(context).toLighter,
+                ),
+                if (trailing != null)
+                  SizedBox(
+                    height: globalState.measure.listRowHeight,
+                    child: trailing,
+                  ),
+              ],
+            );
+          }
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             spacing: _spacing,
@@ -150,6 +170,7 @@ class FormRowTextField extends StatelessWidget {
   final String? hintText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
+  final TextAlign textAlign;
   final List<TextInputFormatter>? inputFormatters;
   final bool obscureText;
   final bool autofocus;
@@ -166,6 +187,7 @@ class FormRowTextField extends StatelessWidget {
     this.hintText,
     this.keyboardType,
     this.textInputAction,
+    this.textAlign = TextAlign.end,
     this.inputFormatters,
     this.obscureText = false,
     this.autofocus = false,
@@ -181,6 +203,7 @@ class FormRowTextField extends StatelessWidget {
       TextDirection.ltr => 1.0,
       TextDirection.rtl => -1.0,
     };
+    if (textAlign == TextAlign.start) return _buildField(context);
     return Transform.translate(
       offset: Offset(_caretMargin * towardEnd, 0),
       child: _buildField(context),
@@ -202,7 +225,7 @@ class FormRowTextField extends StatelessWidget {
       enableSuggestions: enableSuggestions,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
-      textAlign: TextAlign.end,
+      textAlign: textAlign,
       cursorWidth: _cursorWidth,
       decoration: InputDecoration.collapsed(
         border: const NoInputBorder(),
@@ -215,7 +238,7 @@ class FormRowTextField extends StatelessWidget {
                   hintText,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
+                  textAlign: textAlign,
                   style: AppTextStyle.body
                       .of(context)
                       .copyWith(color: context.colorScheme.onSurfaceVariant),
@@ -232,6 +255,7 @@ class FormRowSecretTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final String? hintText;
   final TextInputAction? textInputAction;
+  final TextAlign textAlign;
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onFieldSubmitted;
@@ -242,6 +266,7 @@ class FormRowSecretTextField extends StatefulWidget {
     this.focusNode,
     this.hintText,
     this.textInputAction,
+    this.textAlign = TextAlign.end,
     this.inputFormatters,
     this.onChanged,
     this.onFieldSubmitted,
@@ -267,6 +292,7 @@ class _FormRowSecretTextFieldState extends State<FormRowSecretTextField> {
             hintText: widget.hintText,
             obscureText: _obscure,
             textInputAction: widget.textInputAction,
+            textAlign: widget.textAlign,
             autocorrect: false,
             enableSuggestions: false,
             inputFormatters: widget.inputFormatters,

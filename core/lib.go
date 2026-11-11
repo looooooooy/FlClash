@@ -251,7 +251,7 @@ func InvokeMethod(data string, reply func([]byte)) {
 	if err := json.Unmarshal([]byte(data), call); err != nil {
 		reply(encodeResponse(MethodResponse{Error: &MethodError{
 			Code:    "invalid_method_call",
-			Message: err.Error(),
+			Message: "Invalid method envelope",
 		}}))
 		return
 	}

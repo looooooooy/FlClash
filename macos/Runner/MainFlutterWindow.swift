@@ -6,6 +6,11 @@ import LaunchAtLogin
 class MainFlutterWindow: NSWindow {
     override func awakeFromNib() {
         let flutterViewController = FlutterViewController()
+        let accountChallengeRegistrar = flutterViewController.engine.registrar(forPlugin: "AccountChallenge")
+        accountChallengeRegistrar.register(
+            AccountChallengeViewFactory(messenger: flutterViewController.engine.binaryMessenger),
+            withId: "com.follow.clash/account-challenge/macos"
+        )
         let windowFrame = self.frame
         self.contentViewController = flutterViewController
         self.setFrame(windowFrame, display: true)

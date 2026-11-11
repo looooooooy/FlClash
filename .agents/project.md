@@ -88,15 +88,20 @@ own tree. Everything downstream sees `DynamicColorSeeds`.
 Linux:
 
 ```bash
-sudo apt-get install libayatana-appindicator3-dev
+sudo apt-get install libayatana-appindicator3-dev libsecret-1-dev
 ```
+
+Linux account storage also needs `libsecret-1-0` and a running Secret Service keyring (GNOME Keyring or KWallet). The setup script and Linux CI already install the development package; Debian/RPM packaging already declares the runtime dependency. AppImage users must provide the runtime/keyring on the host. Without an available keyring, account storage reports failure and has no plaintext fallback.
 
 Windows:
 
-- GCC and Inno Setup.
+- Visual Studio 2022 C++ tools, the Windows SDK and Inno Setup.
+- HeySocks verification uses WebView2, which requires Windows 10 version 1809 or later and the WebView2 Runtime.
 
 macOS:
 
 ```bash
 npm install -g appdmg
 ```
+
+macOS release builds require Xcode and target the host architecture. HeySocks verification uses the native WKWebView adapter; account secrets are stored in the macOS Keychain.

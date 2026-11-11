@@ -27,6 +27,15 @@ class $ProfilesTable extends Profiles
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       ).withConverter<ProfileType>($ProfilesTable.$convertertype);
+  @override
+  late final GeneratedColumnWithTypeConverter<ManagedProfileInfo?, String>
+  managed = GeneratedColumn<String>(
+    'managed',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<ManagedProfileInfo?>($ProfilesTable.$convertermanaged);
   static const VerificationMeta _labelMeta = const VerificationMeta('label');
   @override
   late final GeneratedColumn<String> label = GeneratedColumn<String>(
@@ -184,6 +193,7 @@ class $ProfilesTable extends Profiles
   List<GeneratedColumn> get $columns => [
     id,
     type,
+    managed,
     label,
     currentGroupName,
     url,
@@ -317,6 +327,12 @@ class $ProfilesTable extends Profiles
           data['${effectivePrefix}type'],
         )!,
       ),
+      managed: $ProfilesTable.$convertermanaged.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}managed'],
+        ),
+      ),
       label: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}label'],
@@ -397,6 +413,8 @@ class $ProfilesTable extends Profiles
 
   static JsonTypeConverter2<ProfileType, String, String> $convertertype =
       const EnumNameConverter<ProfileType>(ProfileType.values);
+  static TypeConverter<ManagedProfileInfo?, String?> $convertermanaged =
+      const ManagedProfileInfoConverter();
   static JsonTypeConverter2<ExtendType, String, String> $converterextendType =
       const EnumNameConverter<ExtendType>(ExtendType.values);
   static TypeConverter<SubscriptionInfo?, String?> $convertersubscriptionInfo =
@@ -412,6 +430,7 @@ class $ProfilesTable extends Profiles
 class RawProfile extends DataClass implements Insertable<RawProfile> {
   final int id;
   final ProfileType type;
+  final ManagedProfileInfo? managed;
   final String label;
   final String? currentGroupName;
   final String url;
@@ -430,6 +449,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
   const RawProfile({
     required this.id,
     required this.type,
+    this.managed,
     required this.label,
     this.currentGroupName,
     required this.url,
@@ -452,6 +472,11 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     map['id'] = Variable<int>(id);
     {
       map['type'] = Variable<String>($ProfilesTable.$convertertype.toSql(type));
+    }
+    if (!nullToAbsent || managed != null) {
+      map['managed'] = Variable<String>(
+        $ProfilesTable.$convertermanaged.toSql(managed),
+      );
     }
     map['label'] = Variable<String>(label);
     if (!nullToAbsent || currentGroupName != null) {
@@ -509,6 +534,9 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     return ProfilesCompanion(
       id: Value(id),
       type: Value(type),
+      managed: managed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(managed),
       label: Value(label),
       currentGroupName: currentGroupName == null && nullToAbsent
           ? const Value.absent()
@@ -553,6 +581,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       type: $ProfilesTable.$convertertype.fromJson(
         serializer.fromJson<String>(json['type']),
       ),
+      managed: serializer.fromJson<ManagedProfileInfo?>(json['managed']),
       label: serializer.fromJson<String>(json['label']),
       currentGroupName: serializer.fromJson<String?>(json['currentGroupName']),
       url: serializer.fromJson<String>(json['url']),
@@ -586,6 +615,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       'type': serializer.toJson<String>(
         $ProfilesTable.$convertertype.toJson(type),
       ),
+      'managed': serializer.toJson<ManagedProfileInfo?>(managed),
       'label': serializer.toJson<String>(label),
       'currentGroupName': serializer.toJson<String?>(currentGroupName),
       'url': serializer.toJson<String>(url),
@@ -613,6 +643,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
   RawProfile copyWith({
     int? id,
     ProfileType? type,
+    Value<ManagedProfileInfo?> managed = const Value.absent(),
     String? label,
     Value<String?> currentGroupName = const Value.absent(),
     String? url,
@@ -631,6 +662,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
   }) => RawProfile(
     id: id ?? this.id,
     type: type ?? this.type,
+    managed: managed.present ? managed.value : this.managed,
     label: label ?? this.label,
     currentGroupName: currentGroupName.present
         ? currentGroupName.value
@@ -658,6 +690,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     return RawProfile(
       id: data.id.present ? data.id.value : this.id,
       type: data.type.present ? data.type.value : this.type,
+      managed: data.managed.present ? data.managed.value : this.managed,
       label: data.label.present ? data.label.value : this.label,
       currentGroupName: data.currentGroupName.present
           ? data.currentGroupName.value
@@ -699,6 +732,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     return (StringBuffer('RawProfile(')
           ..write('id: $id, ')
           ..write('type: $type, ')
+          ..write('managed: $managed, ')
           ..write('label: $label, ')
           ..write('currentGroupName: $currentGroupName, ')
           ..write('url: $url, ')
@@ -722,6 +756,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
   int get hashCode => Object.hash(
     id,
     type,
+    managed,
     label,
     currentGroupName,
     url,
@@ -744,6 +779,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       (other is RawProfile &&
           other.id == this.id &&
           other.type == this.type &&
+          other.managed == this.managed &&
           other.label == this.label &&
           other.currentGroupName == this.currentGroupName &&
           other.url == this.url &&
@@ -764,6 +800,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
 class ProfilesCompanion extends UpdateCompanion<RawProfile> {
   final Value<int> id;
   final Value<ProfileType> type;
+  final Value<ManagedProfileInfo?> managed;
   final Value<String> label;
   final Value<String?> currentGroupName;
   final Value<String> url;
@@ -782,6 +819,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
   const ProfilesCompanion({
     this.id = const Value.absent(),
     this.type = const Value.absent(),
+    this.managed = const Value.absent(),
     this.label = const Value.absent(),
     this.currentGroupName = const Value.absent(),
     this.url = const Value.absent(),
@@ -801,6 +839,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
   ProfilesCompanion.insert({
     this.id = const Value.absent(),
     required ProfileType type,
+    this.managed = const Value.absent(),
     required String label,
     this.currentGroupName = const Value.absent(),
     required String url,
@@ -827,6 +866,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
   static Insertable<RawProfile> custom({
     Expression<int>? id,
     Expression<String>? type,
+    Expression<String>? managed,
     Expression<String>? label,
     Expression<String>? currentGroupName,
     Expression<String>? url,
@@ -846,6 +886,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (type != null) 'type': type,
+      if (managed != null) 'managed': managed,
       if (label != null) 'label': label,
       if (currentGroupName != null) 'current_group_name': currentGroupName,
       if (url != null) 'url': url,
@@ -868,6 +909,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
   ProfilesCompanion copyWith({
     Value<int>? id,
     Value<ProfileType>? type,
+    Value<ManagedProfileInfo?>? managed,
     Value<String>? label,
     Value<String?>? currentGroupName,
     Value<String>? url,
@@ -887,6 +929,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     return ProfilesCompanion(
       id: id ?? this.id,
       type: type ?? this.type,
+      managed: managed ?? this.managed,
       label: label ?? this.label,
       currentGroupName: currentGroupName ?? this.currentGroupName,
       url: url ?? this.url,
@@ -915,6 +958,11 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     if (type.present) {
       map['type'] = Variable<String>(
         $ProfilesTable.$convertertype.toSql(type.value),
+      );
+    }
+    if (managed.present) {
+      map['managed'] = Variable<String>(
+        $ProfilesTable.$convertermanaged.toSql(managed.value),
       );
     }
     if (label.present) {
@@ -982,6 +1030,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     return (StringBuffer('ProfilesCompanion(')
           ..write('id: $id, ')
           ..write('type: $type, ')
+          ..write('managed: $managed, ')
           ..write('label: $label, ')
           ..write('currentGroupName: $currentGroupName, ')
           ..write('url: $url, ')
@@ -5362,6 +5411,7 @@ typedef $$ProfilesTableCreateCompanionBuilder =
     ProfilesCompanion Function({
       Value<int> id,
       required ProfileType type,
+      Value<ManagedProfileInfo?> managed,
       required String label,
       Value<String?> currentGroupName,
       required String url,
@@ -5382,6 +5432,7 @@ typedef $$ProfilesTableUpdateCompanionBuilder =
     ProfilesCompanion Function({
       Value<int> id,
       Value<ProfileType> type,
+      Value<ManagedProfileInfo?> managed,
       Value<String> label,
       Value<String?> currentGroupName,
       Value<String> url,
@@ -5496,6 +5547,16 @@ class $$ProfilesTableFilterComposer
         column: $table.type,
         builder: (column) => ColumnWithTypeConverterFilters(column),
       );
+
+  ColumnWithTypeConverterFilters<
+    ManagedProfileInfo?,
+    ManagedProfileInfo,
+    String
+  >
+  get managed => $composableBuilder(
+    column: $table.managed,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<String> get label => $composableBuilder(
     column: $table.label,
@@ -5701,6 +5762,11 @@ class $$ProfilesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get managed => $composableBuilder(
+    column: $table.managed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get label => $composableBuilder(
     column: $table.label,
     builder: (column) => ColumnOrderings(column),
@@ -5791,6 +5857,9 @@ class $$ProfilesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<ProfileType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<ManagedProfileInfo?, String> get managed =>
+      $composableBuilder(column: $table.managed, builder: (column) => column);
 
   GeneratedColumn<String> get label =>
       $composableBuilder(column: $table.label, builder: (column) => column);
@@ -5994,6 +6063,7 @@ class $$ProfilesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<ProfileType> type = const Value.absent(),
+                Value<ManagedProfileInfo?> managed = const Value.absent(),
                 Value<String> label = const Value.absent(),
                 Value<String?> currentGroupName = const Value.absent(),
                 Value<String> url = const Value.absent(),
@@ -6013,6 +6083,7 @@ class $$ProfilesTableTableManager
               }) => ProfilesCompanion(
                 id: id,
                 type: type,
+                managed: managed,
                 label: label,
                 currentGroupName: currentGroupName,
                 url: url,
@@ -6033,6 +6104,7 @@ class $$ProfilesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required ProfileType type,
+                Value<ManagedProfileInfo?> managed = const Value.absent(),
                 required String label,
                 Value<String?> currentGroupName = const Value.absent(),
                 required String url,
@@ -6052,6 +6124,7 @@ class $$ProfilesTableTableManager
               }) => ProfilesCompanion.insert(
                 id: id,
                 type: type,
+                managed: managed,
                 label: label,
                 currentGroupName: currentGroupName,
                 url: url,

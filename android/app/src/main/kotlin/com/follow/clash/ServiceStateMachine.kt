@@ -147,6 +147,11 @@ internal class ServiceStateMachine(private val host: ServiceStateHost) {
     private suspend fun startFromPreferences() {
         val request = createRequest(running = true)
         sharedState = host.loadSharedState()
+        if (sharedState.requiresAccountRefresh) {
+            host.showToast(sharedState.accountRefreshTip)
+            abandon(request)
+            return
+        }
         if (sharedState.setupParams == null || sharedState.vpnOptions == null) {
             host.showToast(MISSING_CONFIG_MESSAGE)
             abandon(request)

@@ -9,6 +9,7 @@ import 'package:fl_clash/common/migration.dart';
 import 'package:fl_clash/common/mitm_module.dart';
 import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 
@@ -43,13 +44,14 @@ abstract final class BackupEntries {
   /// does what a module downloads; only a local module's attachments do not.
   static List<String> of({
     required Iterable<int> profileIds,
+    Set<int> privateProfileIds = const {},
     required Iterable<int> scriptIds,
     required Iterable<ClashProvider> providers,
     Iterable<MitmModule> mitmModules = const [],
   }) {
     final localModules = mitmModules.where((item) => !item.isRemote);
     return [
-      ...profileIds.map(profile),
+      ...profileIds.where((id) => !privateProfileIds.contains(id)).map(profile),
       ...scriptIds.map(script),
       ...providers.where((item) => !item.isRemote).map(provider),
       ...localModules.map(mitmModule),
@@ -61,7 +63,9 @@ abstract final class BackupEntries {
 
   static List<String> ofData(MigrationData data) {
     return of(
-      profileIds: data.profiles.map((item) => item.id),
+      profileIds: data.profiles
+          .where((item) => item.type != ProfileType.heysocks)
+          .map((item) => item.id),
       scriptIds: data.scripts.map((item) => item.id),
       providers: data.clashProviders,
       mitmModules: data.mitmModules,

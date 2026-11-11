@@ -165,7 +165,7 @@ class GroupMonogram extends StatelessWidget {
             context,
             size: size * 0.62,
             leading: size * 0.62,
-            weight: FontWeight.w600,
+            weight: FontWeight.w800,
           ).copyWith(color: iconTheme.color),
         ),
       ),

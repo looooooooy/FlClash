@@ -9072,6 +9072,291 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `HeySocks account`
+  String get heysocksAccount {
+    return Intl.message(
+      'HeySocks account',
+      name: 'heysocksAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email`
+  String get heysocksEmail {
+    return Intl.message('Email', name: 'heysocksEmail', desc: '', args: []);
+  }
+
+  /// `Sign in`
+  String get heysocksLogin {
+    return Intl.message('Sign in', name: 'heysocksLogin', desc: '', args: []);
+  }
+
+  /// `Sign out`
+  String get heysocksLogout {
+    return Intl.message('Sign out', name: 'heysocksLogout', desc: '', args: []);
+  }
+
+  /// `Sign in again`
+  String get heysocksRelogin {
+    return Intl.message(
+      'Sign in again',
+      name: 'heysocksRelogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signed in`
+  String get heysocksSignedIn {
+    return Intl.message(
+      'Signed in',
+      name: 'heysocksSignedIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not signed in`
+  String get heysocksSignedOut {
+    return Intl.message(
+      'Not signed in',
+      name: 'heysocksSignedOut',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign in to load the countries and lines available to your account.`
+  String get heysocksLoginHint {
+    return Intl.message(
+      'Sign in to load the countries and lines available to your account.',
+      name: 'heysocksLoginHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authorize with another device`
+  String get heysocksDevice {
+    return Intl.message(
+      'Authorize with another device',
+      name: 'heysocksDevice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter this code in the device authorization page of your signed-in HeySocks account.`
+  String get heysocksDeviceHint {
+    return Intl.message(
+      'Enter this code in the device authorization page of your signed-in HeySocks account.',
+      name: 'heysocksDeviceHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for authorization…`
+  String get heysocksWaiting {
+    return Intl.message(
+      'Waiting for authorization…',
+      name: 'heysocksWaiting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account verification`
+  String get heysocksVerification {
+    return Intl.message(
+      'Account verification',
+      name: 'heysocksVerification',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Syncing lines…`
+  String get heysocksSyncing {
+    return Intl.message(
+      'Syncing lines…',
+      name: 'heysocksSyncing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{completed} of {total} checked`
+  String heysocksProgress(Object completed, Object total) {
+    return Intl.message(
+      '$completed of $total checked',
+      name: 'heysocksProgress',
+      desc: '',
+      args: [completed, total],
+    );
+  }
+
+  /// `Available lines`
+  String get heysocksReady {
+    return Intl.message(
+      'Available lines',
+      name: 'heysocksReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unsupported lines`
+  String get heysocksUnsupported {
+    return Intl.message(
+      'Unsupported lines',
+      name: 'heysocksUnsupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed updates`
+  String get heysocksFailed {
+    return Intl.message(
+      'Failed updates',
+      name: 'heysocksFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a country and line`
+  String get heysocksChoose {
+    return Intl.message(
+      'Choose a country and line',
+      name: 'heysocksChoose',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign in to your HeySocks account before connecting.`
+  String get heysocksLoginRequired {
+    return Intl.message(
+      'Sign in to your HeySocks account before connecting.',
+      name: 'heysocksLoginRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The selected line is unavailable. Choose a country and line to continue.`
+  String get heysocksSelectionRequired {
+    return Intl.message(
+      'The selected line is unavailable. Choose a country and line to continue.',
+      name: 'heysocksSelectionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authorization expired. Please try again.`
+  String get heysocksExpired {
+    return Intl.message(
+      'Authorization expired. Please try again.',
+      name: 'heysocksExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unable to reach HeySocks. Check your connection and retry.`
+  String get heysocksNetworkError {
+    return Intl.message(
+      'Unable to reach HeySocks. Check your connection and retry.',
+      name: 'heysocksNetworkError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unable to save the account securely. Please try again.`
+  String get heysocksStorageError {
+    return Intl.message(
+      'Unable to save the account securely. Please try again.',
+      name: 'heysocksStorageError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check your email and password, then try again.`
+  String get heysocksInvalidLogin {
+    return Intl.message(
+      'Check your email and password, then try again.',
+      name: 'heysocksInvalidLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The account operation failed. Please try again.`
+  String get heysocksError {
+    return Intl.message(
+      'The account operation failed. Please try again.',
+      name: 'heysocksError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account-managed connection details cannot be exported.`
+  String get heysocksPrivateProfile {
+    return Intl.message(
+      'Account-managed connection details cannot be exported.',
+      name: 'heysocksPrivateProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open the app to refresh your HeySocks account before connecting.`
+  String get heysocksOpenApp {
+    return Intl.message(
+      'Open the app to refresh your HeySocks account before connecting.',
+      name: 'heysocksOpenApp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Some lines could not be updated. The last valid settings are retained.`
+  String get heysocksPartial {
+    return Intl.message(
+      'Some lines could not be updated. The last valid settings are retained.',
+      name: 'heysocksPartial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `While the app is open and the proxy is running, the current line is checked every 45 seconds. Two failed checks prompt you to switch.`
+  String get heysocksHealthHint {
+    return Intl.message(
+      'While the app is open and the proxy is running, the current line is checked every 45 seconds. Two failed checks prompt you to switch.',
+      name: 'heysocksHealthHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The current line is not responding. Tap to choose another line.`
+  String get heysocksUnresponsive {
+    return Intl.message(
+      'The current line is not responding. Tap to choose another line.',
+      name: 'heysocksUnresponsive',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

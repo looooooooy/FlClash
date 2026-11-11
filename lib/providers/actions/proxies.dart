@@ -21,11 +21,14 @@ class _DelayTestJob {
   final Duration timeout;
   final Set<String> startedOnDispatch = {};
   bool cancelled = false;
+  final List<Delay> results = [];
 }
 
 @Riverpod(keepAlive: true)
 class ProxiesAction extends _$ProxiesAction {
   CoreController get _core => ref.read(coreHandlerProvider);
+
+  int _managedSelectionRevision = 0;
 
   final TaskPool _delayTestPool = TaskPool(maxConcurrentDelayTests);
 
@@ -38,13 +41,92 @@ class ProxiesAction extends _$ProxiesAction {
   final List<String> _bufferedFinishes = [];
 
   Timer? _delayFlushTimer;
+  Timer? _healthTimer;
+  final _health = HeySocksHealth();
+  bool _healthBusy = false;
+  int _healthEpoch = 0;
+
+  bool get _canMonitor =>
+      ref.mounted &&
+      ref.read(currentProfileProvider)?.type == ProfileType.heysocks &&
+      ref.read(appVisibleProvider) &&
+      ref.read(runTimeProvider) != null &&
+      ref.read(coreStatusProvider) == CoreStatus.connected &&
+      ref.read(patchClashConfigProvider).mode != Mode.direct;
+
+  void _syncHealthMonitor() {
+    if (!_canMonitor) {
+      _healthTimer?.cancel();
+      _healthTimer = null;
+      _health.reset();
+      _healthEpoch++;
+      return;
+    }
+    _healthTimer ??= Timer.periodic(
+      const Duration(seconds: 45),
+      (_) => unawaited(_checkHealth()),
+    );
+  }
+
+  String _healthRoot() => ref.read(patchClashConfigProvider).mode == Mode.global
+      ? 'GLOBAL'
+      : managedRoot;
+
+  bool _ownsHealthTarget(String name) =>
+      ref
+          .read(currentProfileProvider)
+          ?.managed
+          ?.lineNames
+          .values
+          .any(
+            (line) => name == line || name.startsWith('$line · Connection '),
+          ) ??
+      false;
+
+  Future<void> _checkHealth() async {
+    if (_healthBusy || !_canMonitor || _delayTestJobs.isNotEmpty) return;
+    final root = ref.read(groupsProvider).getGroup(_healthRoot());
+    if (root == null) return;
+    final selected = ref
+        .read(realSelectedProxyStateProvider(root.name))
+        .proxyName;
+    if (!_ownsHealthTarget(selected)) return;
+    _healthBusy = true;
+    try {
+      await _runDelayTests([
+        (
+          proxies: [Proxy(name: root.name, type: root.type.name)],
+          testUrl: root.testUrl,
+        ),
+      ], monitor: true);
+    } finally {
+      _healthBusy = false;
+    }
+  }
 
   final Map<String, String> _pendingSelectedRollback = {};
 
   @override
   void build() {
-    ref.onDispose(() => _delayFlushTimer?.cancel());
+    ref.onDispose(() {
+      _delayFlushTimer?.cancel();
+      _healthTimer?.cancel();
+    });
+    ref.listen(appVisibleProvider, (_, _) => _syncHealthMonitor());
+    ref.listen(runTimeProvider, (_, _) => _syncHealthMonitor());
+    ref.listen(currentProfileProvider, (_, _) {
+      _health.reset();
+      _healthEpoch++;
+      _syncHealthMonitor();
+    });
+    ref.listen(patchClashConfigProvider.select((value) => value.mode), (_, _) {
+      _health.reset();
+      _healthEpoch++;
+      _syncHealthMonitor();
+    });
+    _syncHealthMonitor();
     ref.listen(coreStatusProvider, (_, next) {
+      _syncHealthMonitor();
       if (next != CoreStatus.connected) {
         cancelDelayTests();
       }
@@ -92,6 +174,13 @@ class ProxiesAction extends _$ProxiesAction {
   }
 
   void changeProxyDebounce(String groupName, String proxyName) {
+    if (ref.read(currentProfileProvider)?.type == ProfileType.heysocks) {
+      debouncer.call((FunctionTag.changeProxy, groupName), () async {
+        await changeProxy(groupName: groupName, proxyName: proxyName);
+        updateGroupsDebounce();
+      });
+      return;
+    }
     _pendingSelectedRollback.putIfAbsent(
       groupName,
       () => _currentSelectedName(groupName),
@@ -179,6 +268,29 @@ class ProxiesAction extends _$ProxiesAction {
     required String groupName,
     required String proxyName,
   }) async {
+    if (ref.read(currentProfileProvider)?.type == ProfileType.heysocks) {
+      final revision = ++_managedSelectionRevision;
+      final profileId = ref.read(currentProfileIdProvider);
+      try {
+        await ref
+            .read(managedAccountProvider)
+            .ensureUsable(group: groupName, target: proxyName);
+        await ref.read(setupActionProvider.notifier).applyProfile();
+        if (revision != _managedSelectionRevision ||
+            profileId != ref.read(currentProfileIdProvider)) {
+          return;
+        }
+      } catch (error) {
+        dialogs.showBanner(
+          accountFailureLabel(
+            currentAppLocalizations,
+            accountFailureKind(error),
+          ),
+          level: BannerLevel.error,
+        );
+        return;
+      }
+    }
     final profilesAction = ref.read(profilesActionProvider.notifier);
     final rollbackName =
         _pendingSelectedRollback.remove(groupName) ??
@@ -279,6 +391,9 @@ class ProxiesAction extends _$ProxiesAction {
   }
 
   Future<void> addToLocalProxies(String proxyName) async {
+    if (ref.read(currentProfileProvider)?.type == ProfileType.heysocks) {
+      throw MessageException(currentAppLocalizations.heysocksPrivateProfile);
+    }
     final appLocalizations = currentAppLocalizations;
     final definition = await _core.getProxyDefinition(proxyName);
     if (definition == null) {
@@ -389,7 +504,15 @@ class ProxiesAction extends _$ProxiesAction {
     return targets;
   }
 
-  Future<void> _runDelayTests(List<_DelayTestBatch> batches) async {
+  Future<void> _runDelayTests(
+    List<_DelayTestBatch> batches, {
+    bool monitor = false,
+  }) async {
+    final epoch = _healthEpoch;
+    final profileId = ref.read(currentProfileIdProvider);
+    final active = ref
+        .read(realSelectedProxyStateProvider(_healthRoot()))
+        .proxyName;
     final targets = _resolveDelayTestTargets(batches);
     if (targets.isEmpty) {
       return;
@@ -422,6 +545,35 @@ class ProxiesAction extends _$ProxiesAction {
           (key) => !job.startedOnDispatch.contains(key),
         ),
       );
+      if (!job.cancelled &&
+          _canMonitor &&
+          epoch == _healthEpoch &&
+          _ownsHealthTarget(active) &&
+          profileId == ref.read(currentProfileIdProvider) &&
+          active ==
+              ref
+                  .read(realSelectedProxyStateProvider(_healthRoot()))
+                  .proxyName) {
+        final result = job.results
+            .where((delay) => delay.name == active)
+            .firstOrNull;
+        if (result?.value != null &&
+            _health.record(
+              '$profileId:$active',
+              result!.value!,
+              manual: !monitor,
+            )) {
+          dialogs.showBanner(
+            currentAppLocalizations.heysocksUnresponsive,
+            level: BannerLevel.warning,
+            onTap: () {
+              ref.read(currentPageLabelProvider.notifier).value =
+                  PageLabel.proxies;
+              rootNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+            },
+          );
+        }
+      }
     }
   }
 
@@ -442,6 +594,7 @@ class ProxiesAction extends _$ProxiesAction {
         ),
       );
       if (!job.cancelled) {
+        job.results.add(delay);
         setDelay(delay);
       }
     } catch (error) {

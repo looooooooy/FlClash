@@ -100,6 +100,14 @@ class SystemAction extends _$SystemAction {
 
   @protected
   Future<void> closeCore() async {
+    try {
+      await accountService.shutdown();
+    } catch (_) {
+      commonPrint.log(
+        'Account session could not be saved during shutdown',
+        logLevel: LogLevel.error,
+      );
+    }
     await _core.close();
     commonPrint.log('exit');
   }

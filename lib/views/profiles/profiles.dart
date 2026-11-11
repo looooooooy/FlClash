@@ -14,6 +14,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'add.dart';
+import 'account.dart';
 import 'edit.dart';
 import 'preview.dart';
 
@@ -49,7 +50,10 @@ class _ProfilesViewState extends ConsumerState<ProfilesView> {
     final profilesAction = ref.read(profilesActionProvider.notifier);
     final List<UpdatingMessage> messages = [];
     final updateProfiles = profiles.map<Future>((profile) async {
-      if (profile.type != ProfileType.url) return;
+      if (profile.type != ProfileType.url &&
+          profile.type != ProfileType.heysocks) {
+        return;
+      }
       try {
         await profilesAction.updateProfile(profile, showLoading: true);
       } catch (e) {
@@ -307,7 +311,10 @@ class ProfileItem extends ConsumerWidget {
   }
 
   Future updateProfile(WidgetRef ref) async {
-    if (profile.type != ProfileType.url) return;
+    if (profile.type != ProfileType.url &&
+        profile.type != ProfileType.heysocks) {
+      return;
+    }
     await globalState.loadingRun(() async {
       await ref
           .read(profilesActionProvider.notifier)
@@ -336,6 +343,7 @@ class ProfileItem extends ConsumerWidget {
       ProfileType.url => appLocalizations.remote,
       ProfileType.file => appLocalizations.local,
       ProfileType.custom => appLocalizations.custom,
+      ProfileType.heysocks => appLocalizations.heysocksAccount,
     };
   }
 
@@ -395,6 +403,10 @@ class ProfileItem extends ConsumerWidget {
   }
 
   void _handleEdit(BuildContext context) {
+    if (profile.type == ProfileType.heysocks) {
+      showHeySocksAccount(context);
+      return;
+    }
     if (profile.type == ProfileType.custom) {
       _handlePushCustomProfilePage(context, profile.id);
     } else {
@@ -404,6 +416,26 @@ class ProfileItem extends ConsumerWidget {
 
   List<PopupMenuItem> _menuItems(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
+    if (profile.type == ProfileType.heysocks) {
+      return [
+        PopupMenuItem(
+          glyph: AppGlyphs.key,
+          label: appLocalizations.heysocksAccount,
+          onPressed: () => showHeySocksAccount(context),
+        ),
+        PopupMenuItem(
+          glyph: AppGlyphs.sync,
+          label: appLocalizations.sync,
+          onPressed: () => updateProfile(ref),
+        ),
+        PopupMenuItem(
+          glyph: AppGlyphs.delete,
+          label: appLocalizations.delete,
+          danger: true,
+          onPressed: () => _handleDeleteProfile(context, ref),
+        ),
+      ];
+    }
     final isUrl = profile.type == ProfileType.url;
     final isCustom = profile.type == ProfileType.custom;
     return [
