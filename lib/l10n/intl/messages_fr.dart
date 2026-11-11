@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 30588)
-Total output lines: 2411
-
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
 // This is a library that provides messages for a fr locale. All the
 // messages from the main program should be duplicated here with the same
@@ -1166,7 +1163,50 @@ class MessageLookup extends MessageLookupByLibrary {
     "importConfigReplaceTip": MessageLookupByLibrary.simpleMessage(
       "L’importation remplace les groupes de proxys, les règles et les réglages actuels de ce profil",
     ),
-    "importFile": MessageLookupByLibrar…588 tokens truncated…urer le proxy par app.",
+    "importFile": MessageLookupByLibrary.simpleMessage(
+      "Importer depuis un fichier",
+    ),
+    "importFromLink": MessageLookupByLibrary.simpleMessage(
+      "Importer depuis un lien",
+    ),
+    "importUrl": MessageLookupByLibrary.simpleMessage(
+      "Importer depuis une URL",
+    ),
+    "inProgress": MessageLookupByLibrary.simpleMessage("En cours"),
+    "inbound": MessageLookupByLibrary.simpleMessage("Entrant"),
+    "includeInterface": MessageLookupByLibrary.simpleMessage(
+      "Interfaces incluses",
+    ),
+    "includeInterfaceDesc": MessageLookupByLibrary.simpleMessage(
+      "Seul le trafic arrivant sur les interfaces incluses passe par TUN, et les interfaces exclues ne s’appliquent plus.",
+    ),
+    "includeUid": MessageLookupByLibrary.simpleMessage("ID utilisateur inclus"),
+    "infiniteTime": MessageLookupByLibrary.simpleMessage("N’expire jamais"),
+    "init": MessageLookupByLibrary.simpleMessage("Initialisation"),
+    "initFailed": MessageLookupByLibrary.simpleMessage("Échec du démarrage"),
+    "initFailedTip": MessageLookupByLibrary.simpleMessage(
+      "FlClash a rencontré une erreur au démarrage et ne peut pas continuer. Copiez les détails pour signaler le problème. Si cela se reproduit, effacer les données permet généralement de relancer l’app.",
+    ),
+    "initiator": MessageLookupByLibrary.simpleMessage("Initiateur"),
+    "initiatorShort": MessageLookupByLibrary.simpleMessage("De"),
+    "inputProxyGroupName": MessageLookupByLibrary.simpleMessage(
+      "Saisissez le nom du groupe de proxys",
+    ),
+    "inputRuleContent": MessageLookupByLibrary.simpleMessage(
+      "Saisissez le contenu de la règle",
+    ),
+    "installCertificate": MessageLookupByLibrary.simpleMessage(
+      "Installer dans le système",
+    ),
+    "installCertificateSuccess": MessageLookupByLibrary.simpleMessage(
+      "Certificat installé",
+    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
+    "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),
     "installedAppsPermissionRequired": MessageLookupByLibrary.simpleMessage(
       "Autorisation de la liste des apps requise",

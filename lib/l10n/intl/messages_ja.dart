@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 31485)
-Total output lines: 1915
-
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
 // This is a library that provides messages for a ja locale. All the
 // messages from the main program should be duplicated here with the same
@@ -908,7 +905,92 @@ class MessageLookup extends MessageLookupByLibrary {
       "キャプチャをオンにする前のリクエストや、消去済みのリクエストは表示されません。",
     ),
     "httpsDecryption": MessageLookupByLibrary.simpleMessage("HTTPS 復号"),
-    "hue": MessageLookupByLibrary.s…1485 tokens truncated…い",
+    "hue": MessageLookupByLibrary.simpleMessage("色相"),
+    "icon": MessageLookupByLibrary.simpleMessage("アイコン"),
+    "iconRecords": MessageLookupByLibrary.simpleMessage("アイコン履歴"),
+    "iconSets": MessageLookupByLibrary.simpleMessage("アイコンセット"),
+    "iconSetsEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "アイコンセットはまだありません。「カスタムプロファイルのリソース → アイコンセット」で追加できます",
+    ),
+    "iconStyle": MessageLookupByLibrary.simpleMessage("アイコンスタイル"),
+    "iconStyleFilled": MessageLookupByLibrary.simpleMessage("背景あり"),
+    "iconStyleHidden": MessageLookupByLibrary.simpleMessage("非表示"),
+    "iconStylePlain": MessageLookupByLibrary.simpleMessage("背景なし"),
+    "iconUrl": MessageLookupByLibrary.simpleMessage("アイコンURL"),
+    "ignoreBatteryOptimization": MessageLookupByLibrary.simpleMessage(
+      "電池の最適化を無視",
+    ),
+    "import": MessageLookupByLibrary.simpleMessage("インポート"),
+    "importConfigInvalid": MessageLookupByLibrary.simpleMessage(
+      "このファイルはインポートできる設定ではありません",
+    ),
+    "importConfigReplaceTip": MessageLookupByLibrary.simpleMessage(
+      "インポートすると、このプロファイルの現在のプロキシグループ、ルール、設定が置き換えられます",
+    ),
+    "importFile": MessageLookupByLibrary.simpleMessage("ファイルからインポート"),
+    "importFromLink": MessageLookupByLibrary.simpleMessage("リンクからインポート"),
+    "importUrl": MessageLookupByLibrary.simpleMessage("URLからインポート"),
+    "inProgress": MessageLookupByLibrary.simpleMessage("進行中"),
+    "inbound": MessageLookupByLibrary.simpleMessage("インバウンド"),
+    "includeInterface": MessageLookupByLibrary.simpleMessage("対象インターフェース"),
+    "includeInterfaceDesc": MessageLookupByLibrary.simpleMessage(
+      "対象インターフェースから入る通信だけが TUN を通り、除外インターフェースは無効になります。",
+    ),
+    "includeUid": MessageLookupByLibrary.simpleMessage("対象ユーザー ID"),
+    "infiniteTime": MessageLookupByLibrary.simpleMessage("無期限"),
+    "init": MessageLookupByLibrary.simpleMessage("初期化"),
+    "initFailed": MessageLookupByLibrary.simpleMessage("起動に失敗しました"),
+    "initFailedTip": MessageLookupByLibrary.simpleMessage(
+      "FlClash の起動中にエラーが発生したため、続行できません。詳細をコピーして問題を報告できます。繰り返し発生する場合は、データを消去すると起動できるようになることがあります。",
+    ),
+    "initiator": MessageLookupByLibrary.simpleMessage("発信元"),
+    "initiatorShort": MessageLookupByLibrary.simpleMessage("発信元"),
+    "inputProxyGroupName": MessageLookupByLibrary.simpleMessage(
+      "プロキシグループ名を入力してください",
+    ),
+    "inputRuleContent": MessageLookupByLibrary.simpleMessage("ルールの内容を入力してください"),
+    "installCertificate": MessageLookupByLibrary.simpleMessage("システムにインストール"),
+    "installCertificateSuccess": MessageLookupByLibrary.simpleMessage(
+      "証明書をインストールしました",
+    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "アプリ一覧の権限が拒否されたため、インストール済みアプリを取得できません。システム設定から手動で許可してください。",
+        ),
+    "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "このシステムでは、許可するまでインストール済みアプリの一覧が提供されません。許可すると、アプリごとのプロキシを設定できます。",
+    ),
+    "installedAppsPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "アプリ一覧の権限が必要です",
+    ),
+    "installedFonts": MessageLookupByLibrary.simpleMessage("インストール済みのフォント"),
+    "intelligentSelected": MessageLookupByLibrary.simpleMessage("スマート選択"),
+    "interfaceName": MessageLookupByLibrary.simpleMessage("インターフェース名"),
+    "interfaceNameMode": MessageLookupByLibrary.simpleMessage(
+      "アウトバウンドインターフェース",
+    ),
+    "interfaceNameModeClear": MessageLookupByLibrary.simpleMessage("クリア"),
+    "interfaceNameModeCustom": MessageLookupByLibrary.simpleMessage("カスタム"),
+    "interfaceNameModeFollow": MessageLookupByLibrary.simpleMessage("設定に従う"),
+    "internet": MessageLookupByLibrary.simpleMessage("インターネット"),
+    "interval": MessageLookupByLibrary.simpleMessage("間隔"),
+    "intranetIP": MessageLookupByLibrary.simpleMessage("イントラネットIP"),
+    "invalidBackupFile": MessageLookupByLibrary.simpleMessage("無効なバックアップファイル"),
+    "invalidCidrContent": MessageLookupByLibrary.simpleMessage(
+      "192.168.0.0/16 のような CIDR 形式の IP 範囲を入力してください",
+    ),
+    "invalidDscpContent": MessageLookupByLibrary.simpleMessage(
+      "DSCP マークは 63 を超えられません",
+    ),
+    "invalidHostContent": MessageLookupByLibrary.simpleMessage(
+      "ドメインまたは IP アドレスを入力してください",
+    ),
+    "invalidIconSet": MessageLookupByLibrary.simpleMessage("有効なアイコンセットではありません"),
+    "invalidLinkTip": MessageLookupByLibrary.simpleMessage(
+      "サブスクリプションリンクまたはプロキシの共有リンクではありません",
+    ),
+    "invalidListenContent": MessageLookupByLibrary.simpleMessage(
+      "0.0.0.0:1053 のようなアドレスとポートを入力してください",
     ),
     "invalidNetworkContent": MessageLookupByLibrary.simpleMessage(
       "tcp または udp のみ対応しています",

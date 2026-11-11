@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 36869)
-Total output lines: 2350
-
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
 // This is a library that provides messages for a ru locale. All the
 // messages from the main program should be duplicated here with the same
@@ -913,7 +910,444 @@ class MessageLookup extends MessageLookupByLibrary {
       "Домены из этих категорий GeoSite сразу разрешаются через Fallback.",
     ),
     "fallbackFilterIpcidrDesc": MessageLookupByLibrary.simpleMessage(
-      "Если …6869 tokens truncated…hSourceIp": MessageLookupByLibrary.simpleMessage(
+      "Если Nameserver возвращает IP из этих диапазонов, используется ответ Fallback.",
+    ),
+    "file": MessageLookupByLibrary.simpleMessage("Файл"),
+    "fileIsUpdate": MessageLookupByLibrary.simpleMessage(
+      "Файл изменён. Сохранить изменения?",
+    ),
+    "filter": MessageLookupByLibrary.simpleMessage("Фильтр"),
+    "filters": MessageLookupByLibrary.simpleMessage("Фильтры"),
+    "findProcessMode": MessageLookupByLibrary.simpleMessage("Поиск процесса"),
+    "floating": MessageLookupByLibrary.simpleMessage("Плавающая"),
+    "followProfile": MessageLookupByLibrary.simpleMessage("Как в профиле"),
+    "followSystem": MessageLookupByLibrary.simpleMessage("Как в системе"),
+    "fontFamily": MessageLookupByLibrary.simpleMessage("Шрифт"),
+    "fontSize": MessageLookupByLibrary.simpleMessage("Размер"),
+    "forceDnsMapping": MessageLookupByLibrary.simpleMessage(
+      "Принудительно для DNS-сопоставлений",
+    ),
+    "forceDnsMappingDesc": MessageLookupByLibrary.simpleMessage(
+      "«Принудительно для DNS-сопоставлений» анализирует и соединения, домен которых получен из DNS-сопоставления.",
+    ),
+    "forceDomain": MessageLookupByLibrary.simpleMessage(
+      "Принудительные домены",
+    ),
+    "forceDomainDesc": MessageLookupByLibrary.simpleMessage(
+      "Принудительные домены тоже анализируются; остальные соединения с доменом не затрагиваются.",
+    ),
+    "forceRestartCoreTip": MessageLookupByLibrary.simpleMessage(
+      "Вы уверены, что хотите принудительно перезапустить ядро?",
+    ),
+    "fr": MessageLookupByLibrary.simpleMessage("Французский"),
+    "general": MessageLookupByLibrary.simpleMessage("Общие"),
+    "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
+      "Добавленные здесь параметры заменяют соответствующие настройки всех профилей; остальные остаются такими, как в профиле, а если профиль их не задаёт, действуют значения ядра по умолчанию.",
+    ),
+    "generateCertificate": MessageLookupByLibrary.simpleMessage(
+      "Создать сертификат",
+    ),
+    "geoResources": MessageLookupByLibrary.simpleMessage("Geo"),
+    "geoSkipped": m30,
+    "geoUpdated": m31,
+    "geodataLoader": MessageLookupByLibrary.simpleMessage(
+      "Geo: экономия памяти",
+    ),
+    "global": MessageLookupByLibrary.simpleMessage("Глобальный"),
+    "go": MessageLookupByLibrary.simpleMessage("Перейти"),
+    "goDownload": MessageLookupByLibrary.simpleMessage("Скачать"),
+    "goToConfigureAddedRules": MessageLookupByLibrary.simpleMessage(
+      "Перейти к настройке добавленных правил",
+    ),
+    "goToConfigureScript": MessageLookupByLibrary.simpleMessage(
+      "Перейти к настройке скрипта",
+    ),
+    "grid": MessageLookupByLibrary.simpleMessage("Сетка"),
+    "groupBy": MessageLookupByLibrary.simpleMessage("Группировка"),
+    "groupCount": m32,
+    "groupCountUnit": MessageLookupByLibrary.simpleMessage("групп"),
+    "groupTimeoutCount": m33,
+    "hasCacheChange": MessageLookupByLibrary.simpleMessage(
+      "Кэшировать изменения?",
+    ),
+    "hashByInUser": MessageLookupByLibrary.simpleMessage(
+      "Хешировать по пользователю входящего подключения",
+    ),
+    "headerRewrite": MessageLookupByLibrary.simpleMessage(
+      "Перезапись заголовков",
+    ),
+    "healthCheck": MessageLookupByLibrary.simpleMessage("Проверка состояния"),
+    "helperCorruptTip": MessageLookupByLibrary.simpleMessage(
+      "Служба Helper недоступна, поэтому TUN-режим включить нельзя. Переустановите FlClash.",
+    ),
+    "hex": MessageLookupByLibrary.simpleMessage("Hex"),
+    "heysocksAccount": MessageLookupByLibrary.simpleMessage("Аккаунт HeySocks"),
+    "heysocksChoose": MessageLookupByLibrary.simpleMessage(
+      "Выбрать страну и линию",
+    ),
+    "heysocksDevice": MessageLookupByLibrary.simpleMessage(
+      "Авторизация с другого устройства",
+    ),
+    "heysocksDeviceHint": MessageLookupByLibrary.simpleMessage(
+      "Введите код на странице авторизации устройств в своём аккаунте HeySocks.",
+    ),
+    "heysocksEmail": MessageLookupByLibrary.simpleMessage("Электронная почта"),
+    "heysocksError": MessageLookupByLibrary.simpleMessage(
+      "Операция с аккаунтом не удалась. Повторите попытку.",
+    ),
+    "heysocksExpired": MessageLookupByLibrary.simpleMessage(
+      "Срок авторизации истёк. Повторите попытку.",
+    ),
+    "heysocksFailed": MessageLookupByLibrary.simpleMessage("Ошибки обновления"),
+    "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
+      "Пока приложение открыто и прокси работает, текущая линия проверяется каждые 45 секунд. После двух сбоев подряд появится предложение сменить линию.",
+    ),
+    "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
+      "Проверьте почту и пароль.",
+    ),
+    "heysocksLogin": MessageLookupByLibrary.simpleMessage("Войти"),
+    "heysocksLoginHint": MessageLookupByLibrary.simpleMessage(
+      "Войдите, чтобы загрузить доступные страны и линии.",
+    ),
+    "heysocksLoginRequired": MessageLookupByLibrary.simpleMessage(
+      "Перед подключением войдите в аккаунт HeySocks.",
+    ),
+    "heysocksLogout": MessageLookupByLibrary.simpleMessage("Выйти"),
+    "heysocksNetworkError": MessageLookupByLibrary.simpleMessage(
+      "Не удалось связаться с HeySocks. Проверьте сеть.",
+    ),
+    "heysocksOpenApp": MessageLookupByLibrary.simpleMessage(
+      "Откройте приложение и обновите аккаунт HeySocks перед подключением.",
+    ),
+    "heysocksPartial": MessageLookupByLibrary.simpleMessage(
+      "Часть линий не обновлена. Сохранены последние рабочие настройки.",
+    ),
+    "heysocksPrivateProfile": MessageLookupByLibrary.simpleMessage(
+      "Параметры подключения аккаунта нельзя экспортировать.",
+    ),
+    "heysocksProgress": m34,
+    "heysocksReady": MessageLookupByLibrary.simpleMessage("Доступные линии"),
+    "heysocksRelogin": MessageLookupByLibrary.simpleMessage("Войти снова"),
+    "heysocksSelectionRequired": MessageLookupByLibrary.simpleMessage(
+      "Выбранная линия недоступна. Выберите страну и линию.",
+    ),
+    "heysocksSignedIn": MessageLookupByLibrary.simpleMessage("Вход выполнен"),
+    "heysocksSignedOut": MessageLookupByLibrary.simpleMessage(
+      "Вход не выполнен",
+    ),
+    "heysocksStorageError": MessageLookupByLibrary.simpleMessage(
+      "Не удалось безопасно сохранить аккаунт. Повторите попытку.",
+    ),
+    "heysocksSyncing": MessageLookupByLibrary.simpleMessage(
+      "Синхронизация линий…",
+    ),
+    "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
+      "Текущая линия не отвечает. Нажмите, чтобы выбрать другую.",
+    ),
+    "heysocksUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Неподдерживаемые линии",
+    ),
+    "heysocksVerification": MessageLookupByLibrary.simpleMessage(
+      "Проверка аккаунта",
+    ),
+    "heysocksWaiting": MessageLookupByLibrary.simpleMessage(
+      "Ожидание авторизации…",
+    ),
+    "hideFromList": MessageLookupByLibrary.simpleMessage("Скрыть из списка"),
+    "hideIp": MessageLookupByLibrary.simpleMessage("Скрыть IP"),
+    "hidePassword": MessageLookupByLibrary.simpleMessage("Скрыть пароль"),
+    "hideTimeoutProxies": MessageLookupByLibrary.simpleMessage(
+      "Скрывать прокси с таймаутом",
+    ),
+    "hopInterval": MessageLookupByLibrary.simpleMessage("Интервал перескока"),
+    "host": MessageLookupByLibrary.simpleMessage("Хост"),
+    "hostname": MessageLookupByLibrary.simpleMessage("Имя хоста"),
+    "hotkeyConflictWith": m35,
+    "hotkeyDesc": MessageLookupByLibrary.simpleMessage(
+      "Глобальные горячие клавиши работают, даже когда окно скрыто. Нажмите на действие, чтобы записать сочетание клавиш.",
+    ),
+    "hotkeyManagement": MessageLookupByLibrary.simpleMessage("Горячие клавиши"),
+    "hotkeyNeedsModifier": m36,
+    "hotkeyNotSet": MessageLookupByLibrary.simpleMessage("Не задано"),
+    "hotkeyUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Не зарегистрировано: сочетание может быть занято другим приложением",
+    ),
+    "hours": MessageLookupByLibrary.simpleMessage("часов"),
+    "hoursAgo": m37,
+    "hoursAgoShort": m38,
+    "http2": MessageLookupByLibrary.simpleMessage("HTTP/2"),
+    "httpBodyNotKept": MessageLookupByLibrary.simpleMessage(
+      "Не записано: не хватало памяти.",
+    ),
+    "httpBodyProtobufGuess": MessageLookupByLibrary.simpleMessage(
+      "Прочитано как Protobuf без схемы: только номера полей, типы предполагаемые.",
+    ),
+    "httpBodyTruncated": MessageLookupByLibrary.simpleMessage(
+      "Записано только начало тела.",
+    ),
+    "httpBodyUndecoded": m39,
+    "httpCapture": MessageLookupByLibrary.simpleMessage("Захват HTTP"),
+    "httpCaptureDesc": MessageLookupByLibrary.simpleMessage(
+      "Записывает запросы к хостам из списка имён хостов; их можно посмотреть в сведениях о соединении. Записи хранятся только в памяти.",
+    ),
+    "httpCaptureLimit": MessageLookupByLibrary.simpleMessage(
+      "Максимум записей",
+    ),
+    "httpCaptureLimitDesc": m40,
+    "httpCaptureNoHosts": MessageLookupByLibrary.simpleMessage(
+      "Хосты не указаны, поэтому ничего не записывается. Добавьте их в поле «Имя хоста» на странице MITM или из сведений о соединении.",
+    ),
+    "httpCaptureOff": MessageLookupByLibrary.simpleMessage("Захват выключен"),
+    "httpExportPrivate": MessageLookupByLibrary.simpleMessage(
+      "Запрос может содержать cookie, токены, пароли и данные форм. Проверьте, что и кому вы передаёте.",
+    ),
+    "httpExportPrivateTitle": MessageLookupByLibrary.simpleMessage(
+      "Содержит личные данные",
+    ),
+    "httpRequestCleared": MessageLookupByLibrary.simpleMessage(
+      "Запись этого запроса удалена",
+    ),
+    "httpRequests": MessageLookupByLibrary.simpleMessage("HTTP-запросы"),
+    "httpRequestsMissing": MessageLookupByLibrary.simpleMessage(
+      "Запросы, отправленные до включения захвата или уже удалённые, не показаны.",
+    ),
+    "httpsDecryption": MessageLookupByLibrary.simpleMessage(
+      "Расшифровка HTTPS",
+    ),
+    "hue": MessageLookupByLibrary.simpleMessage("Оттенок"),
+    "icon": MessageLookupByLibrary.simpleMessage("Значок"),
+    "iconRecords": MessageLookupByLibrary.simpleMessage("История значков"),
+    "iconSets": MessageLookupByLibrary.simpleMessage("Наборы значков"),
+    "iconSetsEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Наборов значков пока нет. Добавьте их в разделе «Ресурсы пользовательских профилей → Наборы значков»",
+    ),
+    "iconStyle": MessageLookupByLibrary.simpleMessage("Стиль значков"),
+    "iconStyleFilled": MessageLookupByLibrary.simpleMessage("С подложкой"),
+    "iconStyleHidden": MessageLookupByLibrary.simpleMessage("Скрыто"),
+    "iconStylePlain": MessageLookupByLibrary.simpleMessage("Без подложки"),
+    "iconUrl": MessageLookupByLibrary.simpleMessage("URL значка"),
+    "ignoreBatteryOptimization": MessageLookupByLibrary.simpleMessage(
+      "Игнорировать оптимизацию батареи",
+    ),
+    "import": MessageLookupByLibrary.simpleMessage("Импорт"),
+    "importConfigInvalid": MessageLookupByLibrary.simpleMessage(
+      "Этот файл не является конфигурацией, которую можно импортировать",
+    ),
+    "importConfigReplaceTip": MessageLookupByLibrary.simpleMessage(
+      "Импорт заменит текущие группы прокси, правила и настройки этого профиля",
+    ),
+    "importFile": MessageLookupByLibrary.simpleMessage("Импорт из файла"),
+    "importFromLink": MessageLookupByLibrary.simpleMessage("Импорт по ссылке"),
+    "importUrl": MessageLookupByLibrary.simpleMessage("Импорт по URL"),
+    "inProgress": MessageLookupByLibrary.simpleMessage("Выполняется"),
+    "inbound": MessageLookupByLibrary.simpleMessage("Входящие"),
+    "includeInterface": MessageLookupByLibrary.simpleMessage(
+      "Включённые интерфейсы",
+    ),
+    "includeInterfaceDesc": MessageLookupByLibrary.simpleMessage(
+      "Через TUN идёт только трафик с включённых интерфейсов, а исключённые интерфейсы больше не действуют.",
+    ),
+    "includeUid": MessageLookupByLibrary.simpleMessage(
+      "Включённые ID пользователей",
+    ),
+    "infiniteTime": MessageLookupByLibrary.simpleMessage("Бессрочно"),
+    "init": MessageLookupByLibrary.simpleMessage("Инициализация"),
+    "initFailed": MessageLookupByLibrary.simpleMessage("Не удалось запустить"),
+    "initFailedTip": MessageLookupByLibrary.simpleMessage(
+      "При запуске FlClash произошла ошибка, и работа не может быть продолжена. Скопируйте подробности, чтобы сообщить о проблеме. Если ошибка повторяется, очистка данных обычно позволяет снова запустить приложение.",
+    ),
+    "initiator": MessageLookupByLibrary.simpleMessage("Инициатор"),
+    "initiatorShort": MessageLookupByLibrary.simpleMessage("Источник"),
+    "inputProxyGroupName": MessageLookupByLibrary.simpleMessage(
+      "Введите название группы прокси",
+    ),
+    "inputRuleContent": MessageLookupByLibrary.simpleMessage(
+      "Введите содержимое правила",
+    ),
+    "installCertificate": MessageLookupByLibrary.simpleMessage(
+      "Установить в систему",
+    ),
+    "installCertificateSuccess": MessageLookupByLibrary.simpleMessage(
+      "Сертификат установлен",
+    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
+    "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
+    ),
+    "installedAppsPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "Требуется разрешение на список приложений",
+    ),
+    "installedFonts": MessageLookupByLibrary.simpleMessage(
+      "Установленные шрифты",
+    ),
+    "intelligentSelected": MessageLookupByLibrary.simpleMessage("Умный выбор"),
+    "interfaceName": MessageLookupByLibrary.simpleMessage("Имя интерфейса"),
+    "interfaceNameMode": MessageLookupByLibrary.simpleMessage(
+      "Исходящий интерфейс",
+    ),
+    "interfaceNameModeClear": MessageLookupByLibrary.simpleMessage("Очистить"),
+    "interfaceNameModeCustom": MessageLookupByLibrary.simpleMessage("Вручную"),
+    "interfaceNameModeFollow": MessageLookupByLibrary.simpleMessage(
+      "Как в конфигурации",
+    ),
+    "internet": MessageLookupByLibrary.simpleMessage("Интернет"),
+    "interval": MessageLookupByLibrary.simpleMessage("Интервал"),
+    "intranetIP": MessageLookupByLibrary.simpleMessage("Внутренний IP"),
+    "invalidBackupFile": MessageLookupByLibrary.simpleMessage(
+      "Недопустимый файл резервной копии",
+    ),
+    "invalidCidrContent": MessageLookupByLibrary.simpleMessage(
+      "Введите диапазон IP в формате CIDR, например 192.168.0.0/16",
+    ),
+    "invalidDscpContent": MessageLookupByLibrary.simpleMessage(
+      "Метка DSCP не может превышать 63",
+    ),
+    "invalidHostContent": MessageLookupByLibrary.simpleMessage(
+      "Введите домен или IP-адрес",
+    ),
+    "invalidIconSet": MessageLookupByLibrary.simpleMessage(
+      "Это не набор значков",
+    ),
+    "invalidLinkTip": MessageLookupByLibrary.simpleMessage(
+      "Это не ссылка на подписку и не ссылка на прокси",
+    ),
+    "invalidListenContent": MessageLookupByLibrary.simpleMessage(
+      "Введите адрес и порт, например 0.0.0.0:1053",
+    ),
+    "invalidNetworkContent": MessageLookupByLibrary.simpleMessage(
+      "Поддерживаются только tcp и udp",
+    ),
+    "invalidOfCount": m41,
+    "invalidPolicy": m42,
+    "invalidPortRangeContent": MessageLookupByLibrary.simpleMessage(
+      "Введите порт или диапазон, например 443 или 8000-9000",
+    ),
+    "invalidProfileQrcode": MessageLookupByLibrary.simpleMessage(
+      "Этот QR-код не содержит ссылку на профиль",
+    ),
+    "invalidProxy": m43,
+    "invalidProxyProvider": m44,
+    "invalidRangeContent": MessageLookupByLibrary.simpleMessage(
+      "Введите числа или диапазоны, например 80 или 8000-9000, через /",
+    ),
+    "invalidRuleSet": m45,
+    "invalidSubRule": m46,
+    "ipAddress": MessageLookupByLibrary.simpleMessage("IP-адрес"),
+    "ipAsn": MessageLookupByLibrary.simpleMessage("ASN"),
+    "ipFlagAbuser": MessageLookupByLibrary.simpleMessage("Злоупотребления"),
+    "ipFlagProxy": MessageLookupByLibrary.simpleMessage("Прокси"),
+    "ipFlagTor": MessageLookupByLibrary.simpleMessage("Tor"),
+    "ipFlagVpn": MessageLookupByLibrary.simpleMessage("VPN"),
+    "ipFlags": MessageLookupByLibrary.simpleMessage("Метки"),
+    "ipOrganization": MessageLookupByLibrary.simpleMessage("Организация"),
+    "ipQualityFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось определить тип IP",
+    ),
+    "ipQualityGood": MessageLookupByLibrary.simpleMessage("Хороший"),
+    "ipQualityLevel": MessageLookupByLibrary.simpleMessage("Уровень"),
+    "ipQualityNormal": MessageLookupByLibrary.simpleMessage("Обычный"),
+    "ipQualityRetry": MessageLookupByLibrary.simpleMessage("Проверить снова"),
+    "ipQualityRisky": MessageLookupByLibrary.simpleMessage("Рискованный"),
+    "ipQualityShort": MessageLookupByLibrary.simpleMessage("Качество"),
+    "ipQualitySource": MessageLookupByLibrary.simpleMessage("Источник ответа"),
+    "ipQualitySources": MessageLookupByLibrary.simpleMessage("Источники"),
+    "ipSourceIpMismatch": MessageLookupByLibrary.simpleMessage(
+      "Другой исходящий IP",
+    ),
+    "ipSourceNoType": MessageLookupByLibrary.simpleMessage("Тип не определён"),
+    "ipSourceRateLimited": MessageLookupByLibrary.simpleMessage(
+      "Лимит запросов",
+    ),
+    "ipType": MessageLookupByLibrary.simpleMessage("Тип"),
+    "ipTypeBusiness": MessageLookupByLibrary.simpleMessage("Бизнес"),
+    "ipTypeHosting": MessageLookupByLibrary.simpleMessage("Дата-центр"),
+    "ipTypeMobile": MessageLookupByLibrary.simpleMessage("Мобильная сеть"),
+    "ipTypeResidential": MessageLookupByLibrary.simpleMessage("Домашний"),
+    "ipTypeUnknown": MessageLookupByLibrary.simpleMessage("Тип неизвестен"),
+    "ipVersion": MessageLookupByLibrary.simpleMessage("Версия IP"),
+    "ipv6Desc": MessageLookupByLibrary.simpleMessage(
+      "Трафик IPv6 принимается, только когда IPv6 включён.",
+    ),
+    "ipv6Timeout": MessageLookupByLibrary.simpleMessage("Тайм-аут IPv6 (мс)"),
+    "itemsCount": m47,
+    "ja": MessageLookupByLibrary.simpleMessage("Японский"),
+    "justNow": MessageLookupByLibrary.simpleMessage("Только что"),
+    "keepAliveIdle": MessageLookupByLibrary.simpleMessage(
+      "Простой TCP keep-alive",
+    ),
+    "keepAliveIntervalDesc": MessageLookupByLibrary.simpleMessage(
+      "Интервал TCP keep-alive",
+    ),
+    "key": MessageLookupByLibrary.simpleMessage("Ключ"),
+    "ko": MessageLookupByLibrary.simpleMessage("Корейский"),
+    "label": MessageLookupByLibrary.simpleMessage("Метка"),
+    "language": MessageLookupByLibrary.simpleMessage("Язык"),
+    "large": MessageLookupByLibrary.simpleMessage("Крупный"),
+    "lastUpdated": MessageLookupByLibrary.simpleMessage("Последнее обновление"),
+    "launchInterrupted": MessageLookupByLibrary.simpleMessage(
+      "Запуск не завершён",
+    ),
+    "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
+      "В прошлый раз приложение неожиданно завершилось во время запуска. Автоматическая настройка для этого запуска пропущена; вы можете запустить её вручную.",
+    ),
+    "layout": MessageLookupByLibrary.simpleMessage("Макет"),
+    "light": MessageLookupByLibrary.simpleMessage("Светлая"),
+    "lineIssueTip": m48,
+    "lineWrap": MessageLookupByLibrary.simpleMessage("Перенос строк"),
+    "link": MessageLookupByLibrary.simpleMessage("Ссылка"),
+    "liquidGlass": MessageLookupByLibrary.simpleMessage("Жидкое стекло"),
+    "list": MessageLookupByLibrary.simpleMessage("Список"),
+    "listen": MessageLookupByLibrary.simpleMessage("Прослушивание"),
+    "listenRoutingMark": MessageLookupByLibrary.simpleMessage(
+      "Метка маршрутизации",
+    ),
+    "listenRoutingMarkDesc": MessageLookupByLibrary.simpleMessage(
+      "Метка маршрутизации действует только в Linux.",
+    ),
+    "liveConnections": MessageLookupByLibrary.simpleMessage(
+      "Активные соединения",
+    ),
+    "loading": MessageLookupByLibrary.simpleMessage("Загрузка…"),
+    "local": MessageLookupByLibrary.simpleMessage("Локально"),
+    "localImage": MessageLookupByLibrary.simpleMessage("Локальное изображение"),
+    "localNetworkDeniedTip": MessageLookupByLibrary.simpleMessage(
+      "Доступ к локальной сети запрещён: используется стек gvisor, локальная сеть недоступна.",
+    ),
+    "localProxies": MessageLookupByLibrary.simpleMessage("Локальные прокси"),
+    "locationPermission": MessageLookupByLibrary.simpleMessage(
+      "Разрешение на геолокацию",
+    ),
+    "locationPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "Разрешение на геолокацию отклонено, поэтому невозможно получить имя текущей сети Wi-Fi. Включите разрешение на геолокацию вручную в системных настройках.",
+    ),
+    "locationPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "По требованию системы для получения имени сети Wi-Fi необходимо разрешение на геолокацию. На Android выберите «Разрешить всегда», иначе имя сети Wi-Fi нельзя получить, пока приложение в фоне.",
+    ),
+    "locationPermissionGuide": m49,
+    "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "Требуется разрешение на геолокацию",
+    ),
+    "log": MessageLookupByLibrary.simpleMessage("Лог"),
+    "logLevel": MessageLookupByLibrary.simpleMessage("Уровень логов"),
+    "logcat": MessageLookupByLibrary.simpleMessage("Захват логов"),
+    "logcatDesc": MessageLookupByLibrary.simpleMessage(
+      "При отключении захвата логов раздел логов скрывается.",
+    ),
+    "logs": MessageLookupByLibrary.simpleMessage("Логи"),
+    "logsAndDiagnostics": MessageLookupByLibrary.simpleMessage(
+      "Логи и диагностика",
+    ),
+    "logsTest": MessageLookupByLibrary.simpleMessage("Тест логов"),
+    "loopback": MessageLookupByLibrary.simpleMessage(
+      "Снятие ограничения loopback для UWP",
+    ),
+    "loose": MessageLookupByLibrary.simpleMessage("Свободный"),
+    "mapLocal": MessageLookupByLibrary.simpleMessage("Локальная подмена"),
+    "matchCase": MessageLookupByLibrary.simpleMessage("Учитывать регистр"),
+    "matchSourceIp": MessageLookupByLibrary.simpleMessage(
       "Сопоставлять IP источника",
     ),
     "matchTarget": MessageLookupByLibrary.simpleMessage("MATCH-TARGET"),
