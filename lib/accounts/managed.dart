@@ -379,6 +379,7 @@ class ManagedAccount {
       throw const AccountFailure('unauthenticated');
     }
     final generation = _generation;
+    final explicitSelection = group != null && target != null;
     // The first sync can keep checking the rest of the catalog after a
     // validated config is visible. Fresh lines need no work on that queue.
     if (_firstPublication case final publication?) {
@@ -394,19 +395,36 @@ class ManagedAccount {
       }
     }
     await _restoreCache(generation);
+    var catalogRefreshUnavailable = false;
     if (_configs.isEmpty) {
       await sync();
     } else {
-      await refreshIfStale();
+      try {
+        await refreshIfStale();
+      } on AccountFailure catch (error) {
+        if (!explicitSelection || !_transientFailure(error)) rethrow;
+        // Keep an explicit switch responsive while the account service is
+        // unreachable; the cached target is still checked below.
+        catalogRefreshUnavailable = true;
+      }
     }
     _check(generation);
-    if (_sync != null) await _sync;
+    if (_sync != null) {
+      try {
+        await _sync;
+      } on AccountFailure catch (error) {
+        if (!explicitSelection || !_transientFailure(error)) rethrow;
+        catalogRefreshUnavailable = true;
+      }
+    }
     await _runWork(() async {
       await _ensureTarget(
         generation,
         group: group,
         target: target,
         globalMode: globalMode,
+        allowCachedOnTransientFailure: explicitSelection,
+        skipTargetRefresh: catalogRefreshUnavailable,
       );
     });
   }
@@ -417,6 +435,8 @@ class ManagedAccount {
     String? target,
     bool? globalMode,
     bool freshOnly = false,
+    bool allowCachedOnTransientFailure = false,
+    bool skipTargetRefresh = false,
   }) async {
     _check(generation);
     final profile = repository.profile;
@@ -462,6 +482,8 @@ class ManagedAccount {
     }
     if (_stale(info.checkedAt[entry.key], managedTargetAge)) {
       if (freshOnly) return false;
+      final cached = _configs[entry.key];
+      if (skipTargetRefresh && cached?.usable == true) return true;
       final node = _nodes[entry.key]!;
       late final AccountNodeConfig config;
       try {
@@ -471,6 +493,11 @@ class ManagedAccount {
       } on AccountFailure catch (error) {
         _check(generation);
         if (_abortsRefresh(error)) rethrow;
+        if (allowCachedOnTransientFailure &&
+            _transientFailure(error) &&
+            cached?.usable == true) {
+          return true;
+        }
         if (!_transientFailure(error)) {
           final remaining = Map<String, AccountNodeConfig>.of(_configs)
             ..remove(entry.key);
@@ -527,6 +554,8 @@ class ManagedAccount {
         group: group,
         target: target,
         globalMode: globalMode,
+        allowCachedOnTransientFailure: allowCachedOnTransientFailure,
+        skipTargetRefresh: skipTargetRefresh,
       );
     }
     _check(generation);

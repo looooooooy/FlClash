@@ -1025,7 +1025,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Actualizaciones fallidas",
     ),
     "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
-      "Con la aplicación abierta y el proxy activo, se comprueba la línea cada 45 segundos. Dos fallos consecutivos generan un aviso para cambiarla.",
+      "Con la aplicación abierta y el proxy activo, la línea se comprueba cada 45 segundos. Dos fallos automáticos o un fallo manual pueden avisar para cambiarla; un fallo no demuestra que no funcione.",
     ),
     "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
       "Compruebe su correo y contraseña.",
@@ -1067,7 +1067,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sincronizando líneas…",
     ),
     "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
-      "La línea actual no responde. Toca para elegir otra.",
+      "La comprobación de la línea actual falló, pero puede seguir funcionando. Toca para ver otras líneas.",
     ),
     "heysocksUnsupported": MessageLookupByLibrary.simpleMessage(
       "Líneas no compatibles",

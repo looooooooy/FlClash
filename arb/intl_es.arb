@@ -1105,6 +1105,6 @@
   "heysocksPrivateProfile": "Los datos de conexión de la cuenta no se pueden exportar.",
   "heysocksOpenApp": "Abra la aplicación para actualizar HeySocks antes de conectarse.",
   "heysocksPartial": "Algunas líneas no se actualizaron. Se conservan los últimos ajustes válidos.",
-  "heysocksHealthHint": "Con la aplicación abierta y el proxy activo, se comprueba la línea cada 45 segundos. Dos fallos consecutivos generan un aviso para cambiarla.",
-  "heysocksUnresponsive": "La línea actual no responde. Toca para elegir otra."
+  "heysocksHealthHint": "Con la aplicación abierta y el proxy activo, la línea se comprueba cada 45 segundos. Dos fallos automáticos o un fallo manual pueden avisar para cambiarla; un fallo no demuestra que no funcione.",
+  "heysocksUnresponsive": "La comprobación de la línea actual falló, pero puede seguir funcionando. Toca para ver otras líneas."
 }

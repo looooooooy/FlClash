@@ -956,7 +956,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksFailed": MessageLookupByLibrary.simpleMessage("Failed updates"),
     "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
-      "While the app is open and the proxy is running, the current line is checked every 45 seconds. Two failed checks prompt you to switch.",
+      "While the app is open and the proxy is running, the current line is checked every 45 seconds. Two failed automatic checks or one failed manual check can prompt a switch; a failed check does not prove the line is unusable.",
     ),
     "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
       "Check your email and password, then try again.",
@@ -994,7 +994,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksSyncing": MessageLookupByLibrary.simpleMessage("Syncing lines…"),
     "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
-      "The current line is not responding. Tap to choose another line.",
+      "The current line failed its check but may still work. Tap to view other lines.",
     ),
     "heysocksUnsupported": MessageLookupByLibrary.simpleMessage(
       "Unsupported lines",

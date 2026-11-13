@@ -1021,7 +1021,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Échecs de mise à jour",
     ),
     "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
-      "Quand l’application est ouverte et le proxy actif, la ligne est vérifiée toutes les 45 secondes. Deux échecs consécutifs déclenchent une invitation à changer.",
+      "Lorsque l’application est ouverte et le proxy actif, la ligne est vérifiée toutes les 45 secondes. Deux échecs automatiques ou un échec manuel peuvent inviter à changer ; un échec ne prouve pas que la ligne est inutilisable.",
     ),
     "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
       "Vérifiez votre adresse e-mail et votre mot de passe.",
@@ -1061,7 +1061,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Synchronisation des lignes…",
     ),
     "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
-      "La ligne actuelle ne répond pas. Touchez pour en choisir une autre.",
+      "Le test de la ligne actuelle a échoué, mais elle peut encore fonctionner. Touchez pour voir les autres lignes.",
     ),
     "heysocksUnsupported": MessageLookupByLibrary.simpleMessage(
       "Lignes non prises en charge",

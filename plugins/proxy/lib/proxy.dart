@@ -19,7 +19,7 @@ class Proxy {
     ProxyProcessRunner? processRunner,
     ProxyExecutableChecker? executableChecker,
   }) {
-    final commandRunner = ProxyCommandRunner(processRunner ?? Process.run);
+    final commandRunner = ProxyCommandRunner(processRunner);
     _linuxProxy = LinuxProxy(
       commandRunner: commandRunner,
       executableChecker: executableChecker,

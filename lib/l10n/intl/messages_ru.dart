@@ -1000,7 +1000,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksFailed": MessageLookupByLibrary.simpleMessage("Ошибки обновления"),
     "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
-      "Пока приложение открыто и прокси работает, текущая линия проверяется каждые 45 секунд. После двух сбоев подряд появится предложение сменить линию.",
+      "Когда приложение открыто и прокси работает, текущая линия проверяется каждые 45 секунд. Два сбоя автоматической проверки или один ручной сбой могут вызвать предложение сменить линию; сбой проверки не доказывает, что линия недоступна.",
     ),
     "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
       "Проверьте почту и пароль.",
@@ -1042,7 +1042,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Синхронизация линий…",
     ),
     "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
-      "Текущая линия не отвечает. Нажмите, чтобы выбрать другую.",
+      "Проверка текущей линии не пройдена, но она может работать. Нажмите, чтобы посмотреть другие линии.",
     ),
     "heysocksUnsupported": MessageLookupByLibrary.simpleMessage(
       "Неподдерживаемые линии",

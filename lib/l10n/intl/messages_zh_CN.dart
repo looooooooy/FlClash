@@ -739,7 +739,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "heysocksExpired": MessageLookupByLibrary.simpleMessage("授权已过期，请重试。"),
     "heysocksFailed": MessageLookupByLibrary.simpleMessage("更新失败"),
     "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
-      "应用在前台且代理运行时，每 45 秒检测当前线路；连续两次无响应会提醒切换。",
+      "应用在前台且代理运行时，每 45 秒检测当前线路。连续两次自动检测失败，或单次手动检测失败时会提醒；检测失败不一定代表线路不可用。",
     ),
     "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
       "请检查邮箱和密码后重试。",
@@ -777,7 +777,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksSyncing": MessageLookupByLibrary.simpleMessage("正在同步线路…"),
     "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
-      "当前线路无响应，点击选择其他线路。",
+      "当前线路检测未通过，仍可能可用。点击查看其他线路。",
     ),
     "heysocksUnsupported": MessageLookupByLibrary.simpleMessage("暂不支持的线路"),
     "heysocksVerification": MessageLookupByLibrary.simpleMessage("账号验证"),

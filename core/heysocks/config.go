@@ -32,16 +32,18 @@ func (ConfigEnvelope) String() string     { return "heysocks.ConfigEnvelope{reda
 func (c ConfigEnvelope) GoString() string { return c.String() }
 
 type Connection struct {
-	Name              string            `json:"name" yaml:"name"`
-	Type              string            `json:"type" yaml:"type"`
-	Server            string            `json:"server" yaml:"server"`
-	Port              int               `json:"port" yaml:"port"`
-	Cipher            string            `json:"cipher" yaml:"cipher"`
-	Password          string            `json:"password" yaml:"password"`
-	FakeNet           map[string]string `json:"fake-net" yaml:"fake-net"`
-	UDP               bool              `json:"udp" yaml:"udp"`
-	UDPOverTCP        bool              `json:"udp-over-tcp" yaml:"udp-over-tcp"`
-	UDPOverTCPVersion int               `json:"udp-over-tcp-version" yaml:"udp-over-tcp-version"`
+	Name                          string            `json:"name" yaml:"name"`
+	Type                          string            `json:"type" yaml:"type"`
+	Server                        string            `json:"server" yaml:"server"`
+	Port                          int               `json:"port" yaml:"port"`
+	Cipher                        string            `json:"cipher" yaml:"cipher"`
+	Password                      string            `json:"password" yaml:"password"`
+	FakeNet                       map[string]string `json:"fake-net" yaml:"fake-net"`
+	UDP                           bool              `json:"udp" yaml:"udp"`
+	UDPOverTCP                    bool              `json:"udp-over-tcp" yaml:"udp-over-tcp"`
+	UDPOverTCPVersion             int               `json:"udp-over-tcp-version" yaml:"udp-over-tcp-version"`
+	ProbeEndpoints                []string          `json:"probe-endpoints,omitempty" yaml:"probe-endpoints,omitempty"`
+	ProbeEndpointFallbackResolver map[string]string `json:"probe-endpoint-fallback-resolver,omitempty" yaml:"probe-endpoint-fallback-resolver,omitempty"`
 }
 
 func (Connection) String() string     { return "heysocks.Connection{redacted}" }

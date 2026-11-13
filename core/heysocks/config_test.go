@@ -190,3 +190,35 @@ func TestNodeConfigRequestPreservesSelectionAndCategory(t *testing.T) {
 		t.Fatal("node configuration fetch failed")
 	}
 }
+
+func TestBuildProfileCarriesCatalogProbeTargets(t *testing.T) {
+	node := fixtureNode()
+	node.Inbound = json.RawMessage(`"probe.example:443,[2001:db8::1]:8443,probe.example:443,invalid"`)
+	node.InboundFallbackResolver = map[string]string{
+		"probe.example":  "198.51.100.10,198.51.100.11",
+		"unused.example": "203.0.113.7",
+	}
+	config, err := ConvertConfig(node, configFixture([]map[string]any{{
+		"type":        "xhttp",
+		"certificate": syntheticCertificate(443, "transport.example"),
+	}}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	profile, err := BuildProfile([]NodeConfig{config})
+	if err != nil {
+		t.Fatal(err)
+	}
+	connection := profile.Proxies[0]
+	if !reflect.DeepEqual(connection.ProbeEndpoints, []string{
+		"probe.example:443",
+		"[2001:db8::1]:8443",
+	}) {
+		t.Fatalf("probe endpoints = %v", connection.ProbeEndpoints)
+	}
+	if !reflect.DeepEqual(connection.ProbeEndpointFallbackResolver, map[string]string{
+		"probe.example": "198.51.100.10,198.51.100.11",
+	}) {
+		t.Fatalf("probe fallback resolver = %v", connection.ProbeEndpointFallbackResolver)
+	}
+}

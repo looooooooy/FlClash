@@ -795,7 +795,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksFailed": MessageLookupByLibrary.simpleMessage("업데이트 실패"),
     "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
-      "앱이 전면에서 프록시를 실행하는 동안 45초마다 현재 회선을 확인합니다. 두 번 연속 실패하면 전환을 안내합니다.",
+      "앱이 전면에 있고 프록시가 실행 중일 때 현재 회선을 45초마다 확인합니다. 자동 확인이 두 번 연속 실패하거나 수동 확인이 실패하면 전환을 안내할 수 있습니다. 확인 실패만으로 회선을 사용할 수 없다고 단정할 수 없습니다.",
     ),
     "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
       "이메일과 비밀번호를 확인하세요.",
@@ -833,7 +833,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksSyncing": MessageLookupByLibrary.simpleMessage("회선 동기화 중…"),
     "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
-      "현재 회선이 응답하지 않습니다. 눌러 다른 회선을 선택하세요.",
+      "현재 회선 확인에 실패했지만 연결될 수도 있습니다. 눌러 다른 회선을 확인하세요.",
     ),
     "heysocksUnsupported": MessageLookupByLibrary.simpleMessage("지원되지 않는 회선"),
     "heysocksVerification": MessageLookupByLibrary.simpleMessage("계정 확인"),

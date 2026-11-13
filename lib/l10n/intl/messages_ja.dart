@@ -805,7 +805,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksFailed": MessageLookupByLibrary.simpleMessage("更新失敗"),
     "heysocksHealthHint": MessageLookupByLibrary.simpleMessage(
-      "アプリが前面でプロキシが動作中は、45秒ごとに現在の回線を確認します。2回連続で失敗すると切り替えを案内します。",
+      "アプリが前面でプロキシが動作中は、現在の回線を45秒ごとに確認します。自動確認が2回連続で失敗するか、手動確認に失敗すると切り替えを案内する場合があります。確認失敗だけで回線が使えないとは限りません。",
     ),
     "heysocksInvalidLogin": MessageLookupByLibrary.simpleMessage(
       "メールとパスワードを確認してください。",
@@ -843,7 +843,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "heysocksSyncing": MessageLookupByLibrary.simpleMessage("回線を同期中…"),
     "heysocksUnresponsive": MessageLookupByLibrary.simpleMessage(
-      "現在の回線が応答しません。タップして別の回線を選択してください。",
+      "現在の回線の確認に失敗しましたが、まだ使える場合があります。タップして他の回線を表示します。",
     ),
     "heysocksUnsupported": MessageLookupByLibrary.simpleMessage("未対応の回線"),
     "heysocksVerification": MessageLookupByLibrary.simpleMessage("アカウント認証"),

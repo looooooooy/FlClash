@@ -407,6 +407,64 @@ USB 10/100/1000 LAN
       expect(commands[3].args.first, '-setproxybypassdomains');
     });
 
+    test('restores prior proxy and bypass settings after stopping', () async {
+      final calls = <List<String>>[];
+      final proxy = MacosProxy(
+        commandRunner: ProxyCommandRunner((
+          executable,
+          arguments, {
+          runInShell = false,
+        }) async {
+          calls.add(List.of(arguments));
+          return switch (arguments.first) {
+            '-listallnetworkservices' => ProcessResult(
+              1,
+              0,
+              'An asterisk (*) denotes that a network service is disabled.\nWi-Fi\n',
+              '',
+            ),
+            '-getproxybypassdomains' => ProcessResult(
+              1,
+              0,
+              'localhost\nintranet.example\n',
+              '',
+            ),
+            '-getwebproxy' ||
+            '-getsecurewebproxy' ||
+            '-getsocksfirewallproxy' => ProcessResult(
+              1,
+              0,
+              'Enabled: No\nServer: old.proxy.example\nPort: 8080\nAuthenticated Proxy Enabled: 0\n',
+              '',
+            ),
+            _ => ProcessResult(1, 0, '', ''),
+          };
+        }),
+      );
+
+      expect(await proxy.start(7890, const ['localhost']), isTrue);
+      expect(await proxy.stop(), isTrue);
+      expect(
+        calls,
+        contains([
+          '-setwebproxy',
+          'Wi-Fi',
+          'old.proxy.example',
+          '8080',
+          'off',
+        ]),
+      );
+      expect(
+        calls,
+        contains([
+          '-setproxybypassdomains',
+          'Wi-Fi',
+          'localhost',
+          'intranet.example',
+        ]),
+      );
+    });
+
     test('reports failure when no active network service is found', () async {
       var callCount = 0;
       final proxy = MacosProxy(

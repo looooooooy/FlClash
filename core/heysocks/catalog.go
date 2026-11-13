@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"sort"
@@ -26,13 +27,14 @@ type Country struct {
 	Nodes      []CatalogNode `json:"nodes"`
 }
 type CatalogNode struct {
-	ID             json.RawMessage `json:"id"`
-	Name           string          `json:"name"`
-	CountryCode    string          `json:"country_code"`
-	CategoryID     json.RawMessage `json:"category_id"`
-	ConnectionCode string          `json:"connection_code,omitempty"`
-	Inbound        json.RawMessage `json:"inbound,omitempty"`
-	Edges          json.RawMessage `json:"edges,omitempty"`
+	ID                      json.RawMessage   `json:"id"`
+	Name                    string            `json:"name"`
+	CountryCode             string            `json:"country_code"`
+	CategoryID              json.RawMessage   `json:"category_id"`
+	ConnectionCode          string            `json:"connection_code,omitempty"`
+	Inbound                 json.RawMessage   `json:"inbound,omitempty"`
+	InboundFallbackResolver map[string]string `json:"inbound_fallback_resolver,omitempty"`
+	Edges                   json.RawMessage   `json:"edges,omitempty"`
 }
 type Node struct {
 	StableID string `json:"stableId"`
@@ -248,6 +250,8 @@ func BuildProfile(configs []NodeConfig) (Profile, error) {
 				return Profile{}, err
 			}
 			conn.Name = lineName
+			conn.ProbeEndpoints = catalogProbeEndpoints(n)
+			conn.ProbeEndpointFallbackResolver = catalogProbeFallbackResolver(n, conn.ProbeEndpoints)
 			if len(config.Connections) > 1 {
 				conn.Name = allocate(lineName+" · "+connectionLabel(i+1), n.StableID[:min(8, len(n.StableID))])
 			}
@@ -273,4 +277,53 @@ func BuildProfile(configs []NodeConfig) (Profile, error) {
 	}
 	profile.Groups = append(profile.Groups, lineGroups...)
 	return profile, nil
+}
+
+// catalogProbeEndpoints keeps the catalog's direct TCP probe targets alongside
+// each generated HeySocks outbound. HeySocks tests these inbounds, not the
+// encrypted transport endpoint embedded in the fetched node configuration.
+func catalogProbeEndpoints(node Node) []string {
+	var inbound string
+	if len(node.Inbound) == 0 || json.Unmarshal(node.Inbound, &inbound) != nil {
+		return nil
+	}
+	seen := map[string]bool{}
+	endpoints := make([]string, 0)
+	for _, endpoint := range strings.Split(inbound, ",") {
+		endpoint = strings.TrimSpace(endpoint)
+		host, portText, err := net.SplitHostPort(endpoint)
+		port, portErr := strconv.Atoi(portText)
+		if err != nil || portErr != nil || host == "" || port < 1 || port > 65535 || seen[endpoint] {
+			continue
+		}
+		seen[endpoint] = true
+		endpoints = append(endpoints, net.JoinHostPort(host, strconv.Itoa(port)))
+	}
+	return endpoints
+}
+
+func catalogProbeFallbackResolver(node Node, endpoints []string) map[string]string {
+	if len(node.InboundFallbackResolver) == 0 || len(endpoints) == 0 {
+		return nil
+	}
+	hosts := make(map[string]bool, len(endpoints))
+	for _, endpoint := range endpoints {
+		host, _, err := net.SplitHostPort(endpoint)
+		if err == nil {
+			hosts[host] = true
+		}
+	}
+	if len(hosts) == 0 {
+		return nil
+	}
+	fallbacks := make(map[string]string)
+	for host := range hosts {
+		if fallback := node.InboundFallbackResolver[host]; fallback != "" && len(fallback) <= 4096 {
+			fallbacks[host] = fallback
+		}
+	}
+	if len(fallbacks) == 0 {
+		return nil
+	}
+	return fallbacks
 }

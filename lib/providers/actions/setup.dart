@@ -511,11 +511,13 @@ class SetupAction extends _$SetupAction {
   Future<bool> applyProfile({
     bool silence = false,
     bool force = false,
+    bool skipManagedCurrentRouteCheck = false,
     Future<void> Function()? preloadInvoke,
   }) async {
     final result = await _runSetup(
       force: force,
       silence: silence,
+      skipManagedCurrentRouteCheck: skipManagedCurrentRouteCheck,
       preloadInvoke: preloadInvoke,
     );
     return result != _SetupTaskResult.failed;
@@ -548,12 +550,14 @@ class SetupAction extends _$SetupAction {
   Future<_SetupTaskResult> _runSetup({
     bool silence = false,
     bool force = false,
+    bool skipManagedCurrentRouteCheck = false,
     Future<void> Function()? preloadInvoke,
   }) async {
     final result = await _setupScheduler.run(() {
       return _setupConfig(
         force: force,
         silence: silence,
+        skipManagedCurrentRouteCheck: skipManagedCurrentRouteCheck,
         preloadInvoke: preloadInvoke,
         onUpdated: () async {
           await ref.read(proxiesActionProvider.notifier).updateGroups();
@@ -843,6 +847,7 @@ class SetupAction extends _$SetupAction {
   Future<_SetupTaskResult> _setupConfig({
     bool force = false,
     bool silence = false,
+    bool skipManagedCurrentRouteCheck = false,
     Future<void> Function()? preloadInvoke,
     FutureOr Function()? onUpdated,
   }) async {
@@ -896,7 +901,9 @@ class SetupAction extends _$SetupAction {
         }
         return _SetupTaskResult.failed;
       }
-      if (_isRunning) {
+      // A user-selected replacement is validated before applyProfile; do not
+      // let the old route block applying the updated managed profile.
+      if (_isRunning && !skipManagedCurrentRouteCheck) {
         try {
           await ref.read(managedAccountProvider).ensureUsable();
           if (!managedCurrent()) return _SetupTaskResult.failed;

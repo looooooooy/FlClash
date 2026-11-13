@@ -1105,6 +1105,6 @@
   "heysocksPrivateProfile": "Les paramètres gérés par le compte ne peuvent pas être exportés.",
   "heysocksOpenApp": "Ouvrez l’application pour actualiser HeySocks avant la connexion.",
   "heysocksPartial": "Certaines lignes n’ont pas été actualisées. Les derniers réglages valides sont conservés.",
-  "heysocksHealthHint": "Quand l’application est ouverte et le proxy actif, la ligne est vérifiée toutes les 45 secondes. Deux échecs consécutifs déclenchent une invitation à changer.",
-  "heysocksUnresponsive": "La ligne actuelle ne répond pas. Touchez pour en choisir une autre."
+  "heysocksHealthHint": "Lorsque l’application est ouverte et le proxy actif, la ligne est vérifiée toutes les 45 secondes. Deux échecs automatiques ou un échec manuel peuvent inviter à changer ; un échec ne prouve pas que la ligne est inutilisable.",
+  "heysocksUnresponsive": "Le test de la ligne actuelle a échoué, mais elle peut encore fonctionner. Touchez pour voir les autres lignes."
 }

@@ -105,6 +105,20 @@ class ProxiesAction extends _$ProxiesAction {
   }
 
   final Map<String, String> _pendingSelectedRollback = {};
+  int _managedSelectionLoads = 0;
+
+  void _beginManagedSelection() {
+    if (_managedSelectionLoads++ == 0) {
+      ref.read(loadingProvider(LoadingTag.proxies).notifier).start();
+    }
+  }
+
+  Future<void> _endManagedSelection() async {
+    if (_managedSelectionLoads == 0) return;
+    if (--_managedSelectionLoads == 0) {
+      await ref.read(loadingProvider(LoadingTag.proxies).notifier).stop();
+    }
+  }
 
   @override
   void build() {
@@ -268,14 +282,39 @@ class ProxiesAction extends _$ProxiesAction {
     required String groupName,
     required String proxyName,
   }) async {
-    if (ref.read(currentProfileProvider)?.type == ProfileType.heysocks) {
+    final isHeySocks =
+        ref.read(currentProfileProvider)?.type == ProfileType.heysocks;
+    if (isHeySocks) _beginManagedSelection();
+    try {
+      await _changeProxy(
+        groupName: groupName,
+        proxyName: proxyName,
+        isHeySocks: isHeySocks,
+      );
+    } finally {
+      if (isHeySocks) await _endManagedSelection();
+    }
+  }
+
+  Future<void> _changeProxy({
+    required String groupName,
+    required String proxyName,
+    required bool isHeySocks,
+  }) async {
+    if (isHeySocks) {
       final revision = ++_managedSelectionRevision;
       final profileId = ref.read(currentProfileIdProvider);
       try {
         await ref
             .read(managedAccountProvider)
             .ensureUsable(group: groupName, target: proxyName);
-        await ref.read(setupActionProvider.notifier).applyProfile();
+        final applied = await ref
+            .read(setupActionProvider.notifier)
+            .applyProfile(skipManagedCurrentRouteCheck: true);
+        if (!applied) return;
+        // applyProfile manages the same loading bar; restart it for the final
+        // Core selection so the indicator spans the whole user action.
+        ref.read(loadingProvider(LoadingTag.proxies).notifier).start();
         if (revision != _managedSelectionRevision ||
             profileId != ref.read(currentProfileIdProvider)) {
           return;
