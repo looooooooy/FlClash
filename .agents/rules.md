@@ -254,6 +254,8 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
 - Queueing for the delay-test semaphore and probing the node each get the full timeout in `handleTestDelay`. With one
   shared deadline, a node that waited behind a saturated semaphore reached `URLTest` with almost nothing left, so a bulk
   test of a large subscription reported whatever sat at the back of the queue as unreachable.
+- HeySocks latency matches its client by measuring TCP connection time to the resolved node endpoint, not the external
+  test URL. Other proxy types keep the normal HTTP URL test.
 - A delay test that the Core does not answer is a fault of the Core or the channel, never a verdict on the proxy:
   `handleTestDelay` returns within its two timeouts on every path. `testDelay` therefore throws instead of answering a
   `-1` delay, and `ProxiesAction` leaves the last measurement in place and abandons the rest of the run. Writing a
