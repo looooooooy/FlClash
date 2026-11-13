@@ -74,6 +74,7 @@ class _ModeSetup extends SetupAction {
   Future<bool> applyProfile({
     bool silence = false,
     bool force = false,
+    bool skipManagedCurrentRouteCheck = false,
     Future<void> Function()? preloadInvoke,
   }) async {
     modesAtApply.add(ref.read(patchClashConfigProvider).mode);

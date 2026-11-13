@@ -96,7 +96,19 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	delay, err := proxy.URLTest(ctx, url, anyDelayTestStatus)
+	var delay uint16
+	var err error
+	if tester, ok := proxy.(interface {
+		TestConnectionLatency(context.Context) (uint16, bool, error)
+	}); ok {
+		var supported bool
+		delay, supported, err = tester.TestConnectionLatency(ctx)
+		if !supported {
+			delay, err = proxy.URLTest(ctx, url, anyDelayTestStatus)
+		}
+	} else {
+		delay, err = proxy.URLTest(ctx, url, anyDelayTestStatus)
+	}
 	if err != nil {
 		delay = 0
 	}

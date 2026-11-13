@@ -61,4 +61,11 @@ class Proxy {
       String() => false,
     };
   }
+
+  Future<bool> recoverProxy() async {
+    return switch (Platform.operatingSystem) {
+      'macos' => await _macosProxy.stop(),
+      String() => true,
+    };
+  }
 }

@@ -255,7 +255,9 @@ Application exit is centralized in `SystemAction` and `SystemExitCoordinator`:
 4. Exit the application exactly once.
 
 The coordinator is idempotent, continues later cleanup steps after an earlier error, preserves the first error for the
-caller, and uses a three-second watchdog as an emergency application-exit path. `Application.dispose()` and
+caller, and uses a three-second watchdog as an emergency application-exit path (30 seconds on macOS so system proxy
+settings can be restored). macOS proxy snapshots are persisted before changing network services and are reconciled
+against YunDu-owned loopback ports on the next start. `Application.dispose()` and
 `CoreManager.onCrash()` do not independently destroy Core; this avoids competing shutdown owners.
 
 ### Applying Setting Changes
@@ -1762,12 +1764,17 @@ NDK version stands in for the hook's cache.
 ## Local Plugins
 
 - `setup`: build-time harness for Go core artifacts and the Rust helper, driven by a Dart build hook; no runtime Dart API.
-- `proxy`: system proxy configuration. On Windows the package installer and uninstaller kill the app, and then run
+- `proxy`: system proxy configuration. On macOS the plugin persists the pre-run proxy settings before modifying the
+  network services; app startup reconciles that snapshot before applying the current system proxy setting, restoring
+  only proxy entries and bypass lists that still match settings recorded by YunDu. A service snapshot is removed after
+  its remaining owned settings are restored or the user has changed them,
+  so partial cleanup cannot overwrite later user changes. On Windows
+  the package installer and uninstaller kill the app, and then run
   `FlClash.exe --clear-stale-proxy`, the installer once the new files are in place; the runner hands it to the plugin
   before any engine starts, and it turns off only a proxy still set to FlClash's `127.0.0.1:<port>` with nothing
   listening on that port. In the app `SystemProxyQueue` sets the system proxy when the Core starts with it on, and
   stops it on a stop or exit only when this run set it, since a stop also clears a proxy, PAC or auto-detect setting
-  someone else made. Nothing is stored, so a launch leaves alone the proxy a crashed run left.
+  someone else made. Windows crash cleanup retains its installer recovery path.
 - `rust_api`: runtime Flutter Rust Bridge FFI package built through Native Assets. See below.
 - `tray`: system tray for Linux, macOS and Windows. Written for FlClash; replaced the `tray_manager` fork.
 - `window`: desktop window control for Linux, macOS and Windows. Written for FlClash; replaced the

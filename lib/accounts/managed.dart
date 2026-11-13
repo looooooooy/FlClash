@@ -219,6 +219,10 @@ class ManagedAccount {
       final nodes = {for (final node in catalog.nodes) node.stableId: node};
       final configs = Map<String, AccountNodeConfig>.of(_configs)
         ..removeWhere((key, _) => !nodes.containsKey(key));
+      for (final node in nodes.values) {
+        final cached = configs[node.stableId];
+        if (cached != null) configs[node.stableId] = cached.withNode(node);
+      }
       final checked = Map<String, DateTime>.of(
         repository.profile?.managed?.checkedAt ?? {},
       )..removeWhere((key, _) => !nodes.containsKey(key));
@@ -395,6 +399,17 @@ class ManagedAccount {
       }
     }
     await _restoreCache(generation);
+    if (explicitSelection &&
+        _sync != null &&
+        await _ensureTarget(
+          generation,
+          group: group,
+          target: target,
+          globalMode: globalMode,
+          skipTargetRefresh: true,
+        )) {
+      return;
+    }
     var catalogRefreshUnavailable = false;
     if (_configs.isEmpty) {
       await sync();
@@ -402,9 +417,8 @@ class ManagedAccount {
       try {
         await refreshIfStale();
       } on AccountFailure catch (error) {
-        if (!explicitSelection || !_transientFailure(error)) rethrow;
-        // Keep an explicit switch responsive while the account service is
-        // unreachable; the cached target is still checked below.
+        if (!_transientFailure(error)) rethrow;
+        // Retain the last usable config during a temporary account outage.
         catalogRefreshUnavailable = true;
       }
     }
@@ -413,7 +427,7 @@ class ManagedAccount {
       try {
         await _sync;
       } on AccountFailure catch (error) {
-        if (!explicitSelection || !_transientFailure(error)) rethrow;
+        if (!_transientFailure(error)) rethrow;
         catalogRefreshUnavailable = true;
       }
     }
@@ -423,7 +437,7 @@ class ManagedAccount {
         group: group,
         target: target,
         globalMode: globalMode,
-        allowCachedOnTransientFailure: explicitSelection,
+        allowCachedOnTransientFailure: true,
         skipTargetRefresh: catalogRefreshUnavailable,
       );
     });

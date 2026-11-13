@@ -409,14 +409,29 @@ USB 10/100/1000 LAN
 
     test('restores prior proxy and bypass settings after stopping', () async {
       final calls = <List<String>>[];
+      final directory = await Directory.systemTemp.createTemp(
+        'proxy-snapshot-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final settings = {
+        for (final kind in ['web', 'secure', 'socks'])
+          kind: <String, Object>{
+            'enabled': false,
+            'server': 'old.proxy.example',
+            'port': '8080',
+          },
+      };
+      var bypassDomains = <String>['localhost', 'intranet.example'];
       final proxy = MacosProxy(
+        snapshotFile: () async => File('${directory.path}/snapshot.json'),
         commandRunner: ProxyCommandRunner((
           executable,
           arguments, {
           runInShell = false,
         }) async {
           calls.add(List.of(arguments));
-          return switch (arguments.first) {
+          final command = arguments.first;
+          return switch (command) {
             '-listallnetworkservices' => ProcessResult(
               1,
               0,
@@ -426,48 +441,193 @@ USB 10/100/1000 LAN
             '-getproxybypassdomains' => ProcessResult(
               1,
               0,
-              'localhost\nintranet.example\n',
+              '${bypassDomains.join('\n')}\n',
               '',
             ),
             '-getwebproxy' ||
             '-getsecurewebproxy' ||
-            '-getsocksfirewallproxy' => ProcessResult(
-              1,
-              0,
-              'Enabled: No\nServer: old.proxy.example\nPort: 8080\nAuthenticated Proxy Enabled: 0\n',
-              '',
-            ),
+            '-getsocksfirewallproxy' => () {
+              final setting =
+                  settings[switch (command) {
+                    '-getwebproxy' => 'web',
+                    '-getsecurewebproxy' => 'secure',
+                    _ => 'socks',
+                  }]!;
+              return ProcessResult(
+                1,
+                0,
+                'Enabled: ${setting['enabled'] == true ? 'Yes' : 'No'}\nServer: ${setting['server']}\nPort: ${setting['port']}\nAuthenticated Proxy Enabled: 0\n',
+                '',
+              );
+            }(),
+            '-setwebproxy' ||
+            '-setsecurewebproxy' ||
+            '-setsocksfirewallproxy' => () {
+              final kind = switch (command) {
+                '-setwebproxy' => 'web',
+                '-setsecurewebproxy' => 'secure',
+                _ => 'socks',
+              };
+              final setting = settings[kind]!;
+              setting['server'] = arguments[2];
+              setting['port'] = arguments[3];
+              return ProcessResult(1, 0, '', '');
+            }(),
+            '-setwebproxystate' ||
+            '-setsecurewebproxystate' ||
+            '-setsocksfirewallproxystate' => () {
+              final kind = switch (command) {
+                '-setwebproxystate' => 'web',
+                '-setsecurewebproxystate' => 'secure',
+                _ => 'socks',
+              };
+              settings[kind]!['enabled'] = arguments.last == 'on';
+              return ProcessResult(1, 0, '', '');
+            }(),
+            '-setproxybypassdomains' => () {
+              bypassDomains = arguments.skip(2).toList();
+              if (bypassDomains.length == 1 && bypassDomains.first == 'Empty') {
+                bypassDomains = [];
+              }
+              return ProcessResult(1, 0, '', '');
+            }(),
             _ => ProcessResult(1, 0, '', ''),
           };
         }),
       );
 
       expect(await proxy.start(7890, const ['localhost']), isTrue);
+      expect(await File('${directory.path}/snapshot.json').exists(), isTrue);
       expect(await proxy.stop(), isTrue);
       expect(
-        calls,
-        contains([
-          '-setwebproxy',
-          'Wi-Fi',
-          'old.proxy.example',
-          '8080',
-          'off',
-        ]),
+        calls.map((args) => args.join('\u0000')),
+        contains(
+          [
+            '-setwebproxy',
+            'Wi-Fi',
+            'old.proxy.example',
+            '8080',
+            'off',
+          ].join('\u0000'),
+        ),
       );
       expect(
-        calls,
-        contains([
-          '-setproxybypassdomains',
-          'Wi-Fi',
-          'localhost',
-          'intranet.example',
-        ]),
+        calls.map((args) => args.join('\u0000')),
+        contains(
+          [
+            '-setproxybypassdomains',
+            'Wi-Fi',
+            'localhost',
+            'intranet.example',
+          ].join('\u0000'),
+        ),
       );
     });
 
+    test(
+      'preserves proxy settings changed by the user while YunDu is active',
+      () async {
+        final directory = await Directory.systemTemp.createTemp(
+          'proxy-user-settings-',
+        );
+        addTearDown(() => directory.delete(recursive: true));
+        final settings = {
+          for (final kind in ['web', 'secure', 'socks'])
+            kind: <String, Object>{
+              'enabled': false,
+              'server': 'old.proxy.example',
+              'port': '8080',
+            },
+        };
+        final calls = <List<String>>[];
+        final proxy = MacosProxy(
+          snapshotFile: () async => File('${directory.path}/snapshot.json'),
+          commandRunner: ProxyCommandRunner((
+            executable,
+            arguments, {
+            runInShell = false,
+          }) async {
+            calls.add(List.of(arguments));
+            final command = arguments.first;
+            return switch (command) {
+              '-listallnetworkservices' => ProcessResult(1, 0, 'Wi-Fi\n', ''),
+              '-getproxybypassdomains' => ProcessResult(
+                1,
+                0,
+                'localhost\n',
+                '',
+              ),
+              '-getwebproxy' ||
+              '-getsecurewebproxy' ||
+              '-getsocksfirewallproxy' => () {
+                final kind = switch (command) {
+                  '-getwebproxy' => 'web',
+                  '-getsecurewebproxy' => 'secure',
+                  _ => 'socks',
+                };
+                final setting = settings[kind]!;
+                return ProcessResult(
+                  1,
+                  0,
+                  'Enabled: ${setting['enabled'] == true ? 'Yes' : 'No'}\nServer: ${setting['server']}\nPort: ${setting['port']}\nAuthenticated Proxy Enabled: 0\n',
+                  '',
+                );
+              }(),
+              '-setwebproxy' ||
+              '-setsecurewebproxy' ||
+              '-setsocksfirewallproxy' => () {
+                final kind = switch (command) {
+                  '-setwebproxy' => 'web',
+                  '-setsecurewebproxy' => 'secure',
+                  _ => 'socks',
+                };
+                final setting = settings[kind]!;
+                setting['server'] = arguments[2];
+                setting['port'] = arguments[3];
+                return ProcessResult(1, 0, '', '');
+              }(),
+              '-setwebproxystate' ||
+              '-setsecurewebproxystate' ||
+              '-setsocksfirewallproxystate' => () {
+                final kind = switch (command) {
+                  '-setwebproxystate' => 'web',
+                  '-setsecurewebproxystate' => 'secure',
+                  _ => 'socks',
+                };
+                settings[kind]!['enabled'] = arguments.last == 'on';
+                return ProcessResult(1, 0, '', '');
+              }(),
+              _ => ProcessResult(1, 0, '', ''),
+            };
+          }),
+        );
+
+        expect(await proxy.start(7890, const ['localhost']), isTrue);
+        settings['secure']!['server'] = 'user.proxy.example';
+        settings['secure']!['port'] = '9999';
+        settings['secure']!['enabled'] = true;
+
+        expect(await proxy.stop(), isTrue);
+        expect(settings['secure'], {
+          'enabled': true,
+          'server': 'user.proxy.example',
+          'port': '9999',
+        });
+        expect(
+          calls.where((args) => args.first == '-setsecurewebproxy'),
+          hasLength(1),
+        );
+      },
+    );
+
     test('reports failure when no active network service is found', () async {
       var callCount = 0;
+      final directory = await Directory.systemTemp.createTemp(
+        'proxy-snapshot-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
       final proxy = MacosProxy(
+        snapshotFile: () async => File('${directory.path}/snapshot.json'),
         commandRunner: ProxyCommandRunner((
           executable,
           arguments, {
@@ -485,6 +645,67 @@ USB 10/100/1000 LAN
 
       expect(await proxy.start(7890, const []), isFalse);
       expect(callCount, 1);
+    });
+
+    test('recovers a proxy snapshot left by a previous process', () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'proxy-recovery-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final file = File('${directory.path}/snapshot.json');
+      await file.writeAsString('''
+{"version":1,"services":{"Wi-Fi":{"web":{"enabled":false,"server":"old.proxy.example","port":"8080","authenticated":false},"secure":{"enabled":false,"server":"old.proxy.example","port":"8080","authenticated":false},"socks":{"enabled":false,"server":"old.proxy.example","port":"8080","authenticated":false},"bypassDomains":["localhost"],"ownedPorts":[7890],"ownedBypassDomains":[["127.0.0.1"]]}}}
+''');
+      final calls = <List<String>>[];
+      final proxy = MacosProxy(
+        snapshotFile: () async => file,
+        commandRunner: ProxyCommandRunner((
+          executable,
+          arguments, {
+          runInShell = false,
+        }) async {
+          calls.add(List.of(arguments));
+          return switch (arguments.first) {
+            '-listallnetworkservices' => ProcessResult(1, 0, 'Wi-Fi\n', ''),
+            '-getwebproxy' => ProcessResult(
+              1,
+              0,
+              'Enabled: Yes\nServer: 127.0.0.1\nPort: 7890\nAuthenticated Proxy Enabled: 0\n',
+              '',
+            ),
+            '-getsecurewebproxy' || '-getsocksfirewallproxy' => ProcessResult(
+              1,
+              0,
+              'Enabled: No\nServer: old.proxy.example\nPort: 8080\nAuthenticated Proxy Enabled: 0\n',
+              '',
+            ),
+            '-getproxybypassdomains' => ProcessResult(1, 0, '127.0.0.1\n', ''),
+            '-setproxybypassdomains' => ProcessResult(1, 0, '', ''),
+            _ => ProcessResult(1, 0, '', ''),
+          };
+        }),
+      );
+
+      expect(await proxy.stop(), isTrue);
+      expect(
+        calls.map((args) => args.join('\u0000')),
+        contains(
+          [
+            '-setwebproxy',
+            'Wi-Fi',
+            'old.proxy.example',
+            '8080',
+            'off',
+          ].join('\u0000'),
+        ),
+      );
+      expect(
+        calls.map((args) => args.join('\u0000')),
+        contains(
+          ['-setproxybypassdomains', 'Wi-Fi', 'localhost'].join('\u0000'),
+        ),
+      );
+      expect(await file.exists(), isFalse);
     });
   });
 

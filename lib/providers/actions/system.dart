@@ -40,7 +40,8 @@ class SystemAction extends _$SystemAction {
   }
 
   @protected
-  Duration get exitWatchdogDuration => const Duration(seconds: 3);
+  Duration get exitWatchdogDuration =>
+      Duration(seconds: system.isMacOS ? 30 : 3);
 
   @protected
   Future<void> cleanupExitResources(bool needSave) async {

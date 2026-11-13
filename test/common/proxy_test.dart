@@ -8,7 +8,15 @@ import 'package:proxy/proxy.dart';
 class _FakeProxy implements Proxy {
   final List<String> calls = [];
   Future<bool>? held;
+  Future<bool>? heldRecovery;
   Error? failure;
+  bool recovered = false;
+
+  @override
+  Future<bool> recoverProxy() async {
+    recovered = true;
+    return heldRecovery ?? true;
+  }
 
   Future<bool> _call(String name) async {
     calls.add(name);
@@ -51,6 +59,23 @@ void main() {
     expect(proxy.calls, ['start 7890', 'stop']);
   });
 
+  test('recovers persisted settings before applying current state', () async {
+    final proxy = _FakeProxy();
+    final recovery = Completer<bool>();
+    proxy.heldRecovery = recovery.future;
+    final queue = SystemProxyQueue(proxy);
+
+    final applied = queue.apply(_state(isStart: true));
+    await pumpEventQueue();
+    expect(proxy.calls, isEmpty);
+
+    recovery.complete(true);
+    await applied;
+
+    expect(proxy.recovered, isTrue);
+    expect(proxy.calls, ['start 7890']);
+  });
+
   test('close stops last and drops the starts queued before it', () async {
     final proxy = _FakeProxy();
     final queue = SystemProxyQueue(proxy);
@@ -90,6 +115,7 @@ void main() {
     await queue.close();
 
     expect(proxy.calls, isEmpty);
+    expect(proxy.recovered, isTrue);
   });
 
   test('tries a failed stop again on close', () async {

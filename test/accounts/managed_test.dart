@@ -15,6 +15,7 @@ AccountNode node(String id, String country) => AccountNode.fromPrivateJson({
   'country_code': country,
   'countryName': country,
   'categoryName': 'Standard',
+  'inbound': '$id.edge.example:443',
 });
 
 class CatalogGateway extends FakeGateway {
@@ -30,10 +31,18 @@ class CatalogGateway extends FakeGateway {
   int maxActive = 0;
   int configCalls = 0;
   Completer<void>? configGate;
+  Completer<void>? catalogGate;
+  Completer<void>? catalogStarted;
+  AccountFailure? catalogFailure;
   final configGates = <String, Completer<void>>{};
   @override
   Future<AccountCatalog> catalog(String isp) async {
     catalogCalls++;
+    if (catalogStarted case final started?) {
+      if (!started.isCompleted) started.complete();
+    }
+    await catalogGate?.future;
+    if (catalogFailure case final failure?) throw failure;
     return AccountCatalog(nodes);
   }
 
@@ -201,6 +210,43 @@ void main() {
     expect(manager.status.value.ready, 3);
   });
   test(
+    'a cached target can be selected while a later catalog sync runs',
+    () async {
+      await manager.sync();
+      clock = clock.add(const Duration(minutes: 31));
+      gateway.catalogGate = Completer<void>();
+      gateway.catalogStarted = Completer<void>();
+      final sync = manager.sync(full: false);
+      await gateway.catalogStarted!.future;
+      final publications = repository.publications;
+      try {
+        await manager
+            .ensureUsable(group: managedRoot, target: 'B')
+            .timeout(const Duration(seconds: 1));
+        expect(repository.publications, publications);
+        expect(manager.status.value.syncing, isTrue);
+      } finally {
+        gateway.catalogGate!.complete();
+        await sync;
+      }
+    },
+  );
+  test(
+    'transient catalog failure allows startup with its usable cache',
+    () async {
+      await manager.sync();
+      final stops = repository.stops;
+      clock = clock.add(const Duration(minutes: 31));
+      gateway.catalogFailure = const AccountFailure('network_unavailable');
+
+      await manager.ensureUsable();
+
+      expect(repository.stops, stops);
+      expect(repository.profile!.managed!.requiresLogin, isFalse);
+      expect(repository.cache, isNotEmpty);
+    },
+  );
+  test(
     'first verified line is usable while other lines are still syncing',
     () async {
       final slow = Completer<void>();
@@ -301,10 +347,7 @@ void main() {
           if (full) {
             await manager.sync();
           } else {
-            await expectLater(
-              manager.ensureUsable(),
-              throwsA(isA<AccountFailure>()),
-            );
+            await manager.ensureUsable();
           }
           expect(gateway.fetchedNodes.where((node) => node == 'a').length, 2);
           expect(repository.profile!.managed!.lineNames, contains('a'));
@@ -557,6 +600,23 @@ void main() {
     await manager.refreshIfStale();
     expect(gateway.configCalls, calls + 3);
   });
+  test(
+    'catalog refresh updates metadata on cached node configurations',
+    () async {
+      await manager.sync();
+      final updated = node('a', 'A');
+      updated.toPrivateJson()['inbound'] = 'new-a.edge.example:8443';
+      gateway.nodes = [updated, ...gateway.nodes.skip(1)];
+      clock = clock.add(const Duration(minutes: 31));
+
+      await manager.refreshIfStale();
+
+      expect(
+        repository.cache.first.node.toPrivateJson()['inbound'],
+        'new-a.edge.example:8443',
+      );
+    },
+  );
   test('logout fences publication and leaves no cache or metadata', () async {
     repository.publishing = Completer();
     repository.entered = Completer();

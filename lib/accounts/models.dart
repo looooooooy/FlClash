@@ -147,6 +147,11 @@ class AccountNodeConfig {
       AccountNode.fromPrivateJson(accountMap(_value['node']));
   bool get usable => (_value['connections'] as List? ?? const []).isNotEmpty;
   Map<String, dynamic> toPrivateJson() => _value;
+  AccountNodeConfig withNode(AccountNode node) =>
+      AccountNodeConfig.fromPrivateJson({
+        ..._value,
+        'node': node.toPrivateJson(),
+      });
   @override
   String toString() => 'AccountNodeConfig(redacted)';
 }

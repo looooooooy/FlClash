@@ -19,7 +19,20 @@ class SystemProxyQueue {
   bool _closed = false;
   bool _applied = false;
 
-  SystemProxyQueue(this._proxy);
+  SystemProxyQueue(this._proxy) {
+    _tail = _recoverStaleProxy();
+  }
+
+  Future<void> _recoverStaleProxy() async {
+    try {
+      if (!await _proxy.recoverProxy()) _logFailure();
+    } catch (error) {
+      commonPrint.log(
+        'system proxy recovery failed: $error',
+        logLevel: LogLevel.warning,
+      );
+    }
+  }
 
   Future<void> apply(ProxyState state) {
     return _enqueue(() async {
